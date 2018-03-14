@@ -9,14 +9,22 @@
 pip3 install -r requirements.txt
 ```
 4. Copy ChromeDriver to your machine's path (Download Link : https://sites.google.com/a/chromium.org/chromedriver/downloads)
+###### Video Guide
+
 
 
 
 ## Server.py
 Server.py is a Flask Script that will run on port 5000 by default. Server.py is the only file in the project that requires the templates folder. This Script will recieve input from the harvester and store tokens for later use. Each token is only valid for 110 seconds and will be removed from the tokens list after expiring. The Tokens can be viewed in a web browser by visiting http://YOURIPHERE:5000/json
 
+###### Video Guide (Click for Full Video)
+[![Server.py Video](https://j.gifs.com/BLpA1N.gif)](https://www.youtube.com/watch?v=1WxJDCtxMRs)
+
 ## Harvester.py
 Harvester.py is a Selenium Script that can be automated for any project you use or it can be ran as a basic script (will ask for all the required input). The required inputs are the following fields: Sitekey, Domain, and Server IP. The optional inputs are Gmail Address and Gmail Password (This will just automate signing into google for ReCaptcha one-clicks). Sitekey is the ReCaptcha Sitekey you would like to harvest for, domain is the website that you are harvesting for, and serverip is the IP Address of the server that is running server.py. Server.py is required to store the tokens from the harvester, however it can be ran on the local machine if you point the harvester to localhost.
+
+###### Basic Script Video Guide (Click for Full Video)
+[![Harvester.py Video](https://j.gifs.com/4RwjWn.gif)](https://www.youtube.com/watch?v=g07LPTI4Yhg)
 
 ###### Automation Setup
 ```python
@@ -26,6 +34,7 @@ s.signin()
 #When ready to solve do the below command
 s.solve()
 ```
+
 ###### Basic Script Setup
 ```
 Enter Sitekey : 6Ld2sf4SAAAAAKSgzs0Q13IZhY02Pyo31S2jgOB5
@@ -43,6 +52,9 @@ serverIP = '127.0.0.1'
 token = getToken(serverIP)
 print('Token : ' + token)
 ```
+
+###### Video Guide (Click for Full Video)
+[![Fetch.py Video](https://j.gifs.com/mQ6m7r.gif)](https://www.youtube.com/watch?v=LdCfaG1esG0)
 
 # Leave me a follow on Twitter @Cosm00_!
 
