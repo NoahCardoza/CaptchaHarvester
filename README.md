@@ -1,6 +1,17 @@
 # Recaptcha-Harvester-V2
 # Solve Recaptcha Tokens for use in automated projects.
 
+## SETUP
+1. To install all the dependencies for the script simply download or pull the project
+2. Open a terminal or shell window in the project's directory
+3. Run the following command
+```
+pip3 install -r requirements.txt
+```
+4. Copy ChromeDriver to your machine's path (Download Link : https://sites.google.com/a/chromium.org/chromedriver/downloads)
+
+
+
 ## Server.py
 Server.py is a Flask Script that will run on port 5000 by default. Server.py is the only file in the project that requires the templates folder. This Script will recieve input from the harvester and store tokens for later use. Each token is only valid for 110 seconds and will be removed from the tokens list after expiring. The Tokens can be viewed in a web browser by visiting http://YOURIPHERE:5000/json
 
