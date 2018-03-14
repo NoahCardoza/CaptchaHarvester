@@ -9,10 +9,9 @@
 pip3 install -r requirements.txt
 ```
 4. Copy ChromeDriver to your machine's path (Download Link : https://sites.google.com/a/chromium.org/chromedriver/downloads)
-###### Video Guide
 
-
-
+###### Video Guide (Click for Full Video)
+[![Requirements.txt Video](https://j.gifs.com/L8DO5A.gif)](https://www.youtube.com/watch?v=jolzFNb5iNQ)
 
 ## Server.py
 Server.py is a Flask Script that will run on port 5000 by default. Server.py is the only file in the project that requires the templates folder. This Script will recieve input from the harvester and store tokens for later use. Each token is only valid for 110 seconds and will be removed from the tokens list after expiring. The Tokens can be viewed in a web browser by visiting http://YOURIPHERE:5000/json
