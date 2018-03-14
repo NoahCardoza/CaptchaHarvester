@@ -9,7 +9,7 @@ Harvester.py is a Selenium Script that can be automated for any project you use 
 
 ###### Automation Setup
 ```python
-from harvester import harvest
+from Harvester import harvest
 s = harvest('6Ld2sf4SAAAAAKSgzs0Q13IZhY02Pyo31S2jgOB5','http://patrickhlauke.github.io','127.0.0.1','me@gmail.com','gmailpasswordhere')
 s.signin()
 #When ready to solve do the below command
