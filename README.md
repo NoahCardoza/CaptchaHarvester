@@ -55,5 +55,18 @@ print('Token : ' + token)
 ###### Video Guide (Click for Full Video)
 [![Fetch.py Video](https://j.gifs.com/mQ6m7r.gif)](https://www.youtube.com/watch?v=LdCfaG1esG0)
 
+## iOS-Harvester
+iOS-Harvester is and iOS app that will allow you to solve recaptchas and will post them to your Token Server (Server.py) for later use. The app has 3 text fields that can be changed at any time, the top field is for the ReCaptcha Sitekey, middle field is for the domain that the ReCaptcha is to be solved upon, and the bottom field is for the IP Address of the Token Server (Server.py). You may also sign into your google account by pressing the Google button. 
+
+###### Setup
+1. Open the project in XCode by opening the .xcodeproj file.
+2. Plug in your iOS device
+3. Product > Destination > Select your iOS Device
+4. Product > Run
+5. App should open on iOS Device.
+
+###### Video Guide (Click for Full Video)
+[![iOS-ReCaptcha Video](https://j.gifs.com/E97xxv.gif)](https://youtu.be/EBzkxD124G4)
+
 # Leave me a follow on Twitter @Cosm00_!
 
