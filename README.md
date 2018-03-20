@@ -66,7 +66,7 @@ iOS-Harvester is and iOS app that will allow you to solve recaptchas and will po
 5. App should open on iOS Device.
 
 ###### Video Guide (Click for Full Video)
-[![iOS-ReCaptcha Video](https://j.gifs.com/E97xxv.gif)](https://youtu.be/EBzkxD124G4)
+[![iOS-ReCaptcha Video](https://j.gifs.com/YvB5RY.gif)](https://youtu.be/vDwiAzPJaQo)
 
 # Leave me a follow on Twitter @Cosm00_!
 
