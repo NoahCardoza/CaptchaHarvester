@@ -1,6 +1,8 @@
-import requests, json
+import requests
+import json
 
 tokens = []
+
 
 def main(ipaddress):
     global Tokens
@@ -35,5 +37,6 @@ def main(ipaddress):
             index = index + 1
         else:
             tokens.append(capToken)
-            s.post('http://'+ipaddress+':5000/used', data = {'usedtoken':capToken})
+            s.post('http://'+ipaddress+':5000/used',
+                   data={'usedtoken': capToken})
             return(capToken)
