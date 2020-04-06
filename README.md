@@ -42,7 +42,7 @@ optional arguments:
 
 This will use Selenium and navigate to the domain and allow you to solve captchas yourself that will be sent to the server which you can access from your application later.
 
-At the moment this progject can be used for Google's V2 ReCaptchas and hCaptchas.
+At the moment this project can be used for Google's V2 ReCaptchas and hCaptchas.
 
 ```bash
 > python harvester harvest -h
