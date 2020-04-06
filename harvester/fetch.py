@@ -4,16 +4,11 @@ import json
 tokens = []
 
 
-def main(ipaddress):
-    global Tokens
+# TODO: convert to iteratoer/class
+def getToken(host):
+    host = 'http://' + host
     s = requests.Session()
-    while True:
-        try:
-            res = s.get('http://'+ipaddress+':5000/json')
-            break
-        except:
-            pass
-    json_dict = res.json()
+    json_dict = s.get(host + '/json').json()
     index = 0
     capToken = 'temp'
     while True:
@@ -21,14 +16,7 @@ def main(ipaddress):
             capToken = json_dict['tokens'][index]
         except IndexError:
             index = 0
-            while True:
-                try:
-                    res = s.get('http://'+ipaddress+':5000/json')
-                    break
-                except:
-                    pass
-            json_dict = res.json()
-            pass
+            json_dict = s.get(host + '/json').json()
         if capToken in tokens or capToken in json_dict['used']:
             index = index + 1
         elif capToken == 'temp':
@@ -37,6 +25,6 @@ def main(ipaddress):
             index = index + 1
         else:
             tokens.append(capToken)
-            s.post('http://'+ipaddress+':5000/used',
+            s.post(host + '/used',
                    data={'usedtoken': capToken})
             return(capToken)
