@@ -13,11 +13,13 @@ hp = subparser.add_parser('harvest')
 hp.add_argument('type', choices=['recaptcha', 'hcaptcha'])
 hp.add_argument('-k', '--site-key', required=True)
 hp.add_argument('-d', '--domain', required=True)
-hp.add_argument('-s', '--token-server', default='localhost:5000')
+hp.add_argument('-s', '--token-server',
+                help='defaults to localhost:5000', default='localhost:5000')
 hp.add_argument('-g', '--gmail-email')
 
 sp = subparser.add_parser('server')
-sp.add_argument('-p', '--port', default=5000, type=int)
+sp.add_argument('-p', '--port', help='defaults to 5000',
+                default=5000, type=int)
 
 fp = subparser.add_parser('fetch')
 fp.add_argument('-s', '--token-server', default='localhost:5000')
