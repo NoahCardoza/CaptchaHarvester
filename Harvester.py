@@ -1,25 +1,29 @@
-# Code Written by @Cosm00_
+# Code written by @Cosm00_ and adapted by @NoahCardoza
 # Stay Based Youngins....
 
-from selenium import webdriver
+import argparse
+from selenium.webdriver import Chrome
+from selenium.common.exceptions import WebDriverException
 import time
 import getpass
 import selenium
-from selenium.webdriver.chrome.options import Options
+from os import path
+
+__basedir__ = path.dirname(__file__)
 
 
-class harvest:
-    def __init__(self, sitekey, domain, serverip, gmail, gpass):
-        self.sitekey = sitekey
+def load_html_template(captcha, sitekey, server):
+    with open(path.join(__basedir__, 'html', captcha + '.html')) as f:
+        return f.read().replace('{sitekey}', sitekey).replace('{server}', server)
+
+
+class Harvest:
+    def __init__(self, domain, html_template):
+        self.chrome = Chrome()
         self.domain = domain.replace('https://', 'http://')
-        self.serverip = serverip
-        self.googleemail = gmail
-        self.googlepass = gpass
-        self.chrome = webdriver.Chrome()
-        self.htmlcode = "<html><meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'><head><script type='text/javascript' src='https://www.google.com/recaptcha/api.js'></script><script src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' type='text/javascript'></script> <title>Captcha Harvester</title> <style type='text/css'> body{margin: 1em 5em 0 5em; font-family: sans-serif;}fieldset{display: inline; padding: 1em;}</style></head><body> <center> <h3>Captcha Token Harvester</h3> <h5>HTML by: @pxtvr</h5> <h5>Python by: @Cosm00_</h5> <form action='http://serveriphere:5000/solve' method='post'> <fieldset> <div class='g-recaptcha' data-sitekey='sitekeygoeshere' data-callback='sub'></div><p> <input type='submit' value='Submit' id='submit' style='color: #ffffff;background-color: #3c3c3c;border-color: #3c3c3c;display: inline-block;margin-bottom: 0;font-weight: normal;text-align: center;vertical-align: middle;-ms-touch-action: manipulation;touch-action: manipulation;cursor: pointer;background-image: none;border: 1px solid transparent;white-space: nowrap;padding: 8px 12px;font-size: 15px;line-height: 1.4;border-radius: 0;-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;'> </p></fieldset> </form> <fieldset> <h5 style='width: 10vh;'> <a style='text-decoration: none;' href='http://serveriphere:5000/json' target='_blank'>Usable Tokens</a> </h5> </fieldset> </center> <script>function sub(){document.getElementById('submit').click();}</script> </body></html>".replace('sitekeygoeshere',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               self.sitekey).replace('serveriphere', self.serverip)
+        self.html_code = html_template
 
-    def signin(self):
+    def signin(self, email, password):
         self.chrome.get('https://accounts.google.com/signin/v2')
         while True:
             try:
@@ -30,7 +34,7 @@ class harvest:
                 pass
         while True:
             try:
-                emailfield.send_keys(self.googleemail)
+                emailfield.send_keys(email)
                 break
             except:
                 pass
@@ -50,7 +54,7 @@ class harvest:
                 pass
         while True:
             try:
-                passfield.send_keys(self.googlepass)
+                passfield.send_keys(password)
                 break
             except:
                 pass
@@ -72,8 +76,8 @@ class harvest:
         self.chrome.get(self.domain)
         try:
             self.chrome.execute_script(
-                'document.write("{}")'.format(self.htmlcode))
-        except selenium.common.exceptions.WebDriverException:
+                'document.write(`{}`)'.format(self.html_code))
+        except WebDriverException:
             pass
         while True:
             if 'Captcha Token Harvester' in self.chrome.page_source:
@@ -84,7 +88,7 @@ class harvest:
         try:
             self.chrome.execute_script(
                 "var evt = document.createEvent('Event');evt.initEvent('load', false, false);window.dispatchEvent(evt);")
-        except selenium.common.exceptions.WebDriverException:
+        except WebDriverException:
             pass
         while True:
             if 'Success' in self.chrome.page_source:
@@ -94,16 +98,24 @@ class harvest:
 
 
 if __name__ == '__main__':
-    sitekey = input('Enter Sitekey : ')
-    domain = input('Solve For What Domain? : ')
-    server = input('What is the IP of the token server? : ')
-    gmail = input('Enter Gmail : ')
-    gpass = getpass.getpass('Enter Gmail Password  : ')
-    s = harvest(sitekey, domain, server, gmail, gpass)
-    if gmail == '' or gpass == '':
-        pass
-    else:
-        s.signin()
-    input('Press Enter to Begin Solving')
+
+    ap = argparse.ArgumentParser()
+    ap.add_argument('type', choices=['recaptcha', 'hcaptcha'])
+    ap.add_argument('-k', '--site-key', required=True)
+    ap.add_argument('-d', '--domain', required=True)
+    ap.add_argument('-s', '--token-server', default='localhost')
+    ap.add_argument('-g', '--gmail-email')
+
+    args = ap.parse_args()
+
+    html_template = load_html_template(
+        args.type, args.site_key, args.token_server)
+
+    s = Harvest(args.domain, html_template)
+    if args.gmail_email:
+        gmail_email_password = getpass.getpass('> Gmail Password: ')
+        s.signin(args.gmail_email, gmail_email_password)
+        input('> Press Enter to Begin Solving...')
+
     while True:
         s.solve()
