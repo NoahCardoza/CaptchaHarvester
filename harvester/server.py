@@ -41,4 +41,5 @@ def used():
     return('Success')
 
 
-Thread(target=lambda: app.run(host='0.0.0.0')).start()
+def start(port):
+    Thread(target=lambda: app.run(host='0.0.0.0', port=port)).start()

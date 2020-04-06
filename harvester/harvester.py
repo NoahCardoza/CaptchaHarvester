@@ -6,7 +6,6 @@ from selenium.webdriver import Chrome
 from selenium.common.exceptions import WebDriverException
 import time
 import getpass
-import selenium
 from os import path
 
 __basedir__ = path.dirname(__file__)
@@ -95,27 +94,3 @@ class Harvest:
                 break
             else:
                 pass
-
-
-if __name__ == '__main__':
-
-    ap = argparse.ArgumentParser()
-    ap.add_argument('type', choices=['recaptcha', 'hcaptcha'])
-    ap.add_argument('-k', '--site-key', required=True)
-    ap.add_argument('-d', '--domain', required=True)
-    ap.add_argument('-s', '--token-server', default='localhost')
-    ap.add_argument('-g', '--gmail-email')
-
-    args = ap.parse_args()
-
-    html_template = load_html_template(
-        args.type, args.site_key, args.token_server)
-
-    s = Harvest(args.domain, html_template)
-    if args.gmail_email:
-        gmail_email_password = getpass.getpass('> Gmail Password: ')
-        s.signin(args.gmail_email, gmail_email_password)
-        input('> Press Enter to Begin Solving...')
-
-    while True:
-        s.solve()
