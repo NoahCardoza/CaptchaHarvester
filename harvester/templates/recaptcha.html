@@ -1,0 +1,98 @@
+<html>
+<meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
+
+<head>
+    <script type='text/javascript' src='https://www.google.com/recaptcha/api.js'></script>
+    <!-- src='recaptcha.js' -->
+    <!-- <script type='text/javascript'>
+        /* PLEASE DO NOT COPY AND PASTE THIS CODE. */
+        (function () {
+            var w = window
+                , C = '___grecaptcha_cfg'
+                , cfg = w[C] = w[C] || {}
+                , N = 'grecaptcha';
+            var gr = w[N] = w[N] || {};
+            gr.ready = gr.ready || function (f) {
+                (cfg['fns'] = cfg['fns'] || []).push(f);
+            }
+                ;
+            (cfg['render'] = cfg['render'] || []).push('onload');
+            w['__google_recaptcha_client'] = true;
+            var d = document
+                , po = d.createElement('script');
+            po.type = 'text/javascript';
+            po.async = true;
+            po.src = 'recaptcha.js';
+            var e = d.querySelector('script[nonce]')
+                , n = e && (e['nonce'] || e.getAttribute('nonce'));
+            if (n) {
+                po.setAttribute('nonce', n);
+            }
+            var s = d.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(po, s);
+        }
+        )();
+
+    </script> -->
+    <title>Captcha Harvester</title>
+    <style type='text/css'>
+        body {
+            margin: 1em 5em 0 5em;
+            font-family: sans-serif;
+        }
+
+        fieldset {
+            display: inline;
+            padding: 1em;
+        }
+
+        #submit {
+            color: #ffffff;
+            background-color: #3c3c3c;
+            border-color: #3c3c3c;
+            display: inline-block;
+            margin-bottom: 0;
+            font-weight: normal;
+            text-align: center;
+            vertical-align: middle;
+            -ms-touch-action: manipulation;
+            touch-action: manipulation;
+            cursor: pointer;
+            background-image: none;
+            border: 1px solid transparent;
+            white-space: nowrap;
+            padding: 8px 12px;
+            font-size: 15px;
+            line-height: 1.4;
+            border-radius: 0;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+
+<body>
+    <center>
+        <h3>Captcha Token Harvester</h3>
+        <h5>HTML by: @pxtvr</h5>
+        <h5>Python by: @Cosm00_</h5>
+        <form action='http://{server}/solve' method='post'>
+            <fieldset>
+                <div class='g-recaptcha' data-sitekey='6LedDLwUAAAAACn9qsyB_1LaHbFyq6_SpGpLsAhi' data-callback='sub'>
+                </div>
+                <p>
+                    <input type='submit' value='Submit' id='submit'>
+                </p>
+            </fieldset>
+        </form>
+        <fieldset>
+            <h5 style='width: 10vh;'> <a style='text-decoration: none;' href='http://{server}/json'
+                    target='_blank'>Usable Tokens</a> </h5>
+        </fieldset>
+    </center>
+    <script>function sub() { document.getElementById('submit').click(); }</script>
+</body>
+
+</html>
