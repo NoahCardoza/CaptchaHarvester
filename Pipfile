@@ -7,6 +7,7 @@ name = "pypi"
 requests = "*"
 selenium = "*"
 Flask = "*"
+dnslib = "*"
 
 [dev-packages]
 pylint = "*"
