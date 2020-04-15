@@ -67,7 +67,7 @@ def register():
     if rr.rname not in [r[0] for r in dns_resolver.zone]:
         dns_resolver.zone.append((rr.rname, QTYPE[rr.rtype], rr))
 
-    return redirect('http//' + domain + '/harvest?type=' + 'hcaptcha' + '&sitekey=' + sitekey)
+    return redirect('http://' + domain + '/harvest?type=' + 'hcaptcha' + '&sitekey=' + sitekey)
 
 
 @app.route('/', methods=['GET'])
@@ -89,3 +89,5 @@ DNSServer(dns_resolver, port=53, address='127.0.0.1',
 print('live on http://localhost')
 start()
 
+# http://sneakersnstuff.com
+# 33f96e6a-38cd-421b-bb68-7806e1764460
