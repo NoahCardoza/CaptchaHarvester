@@ -2,7 +2,6 @@ import ipaddress
 import proxy
 from flask import Flask, jsonify
 import logging
-import store
 
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
@@ -19,6 +18,8 @@ def start(port=5000, host='127.0.0.1'):
 
 
 if __name__ == '__main__':
+    import store  # avoid freeze_support error on Windows
+
     store.host_map[b'sneakersnstuff.com'] = {
         'type': 'hcaptcha',
         'sitekey': '33f96e6a-38cd-421b-bb68-7806e1764460'
