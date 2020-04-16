@@ -4,10 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-requests = "*"
-selenium = "*"
 Flask = "*"
-dnslib = "*"
+proxy-py = "*"
+requests = "*"
 
 [dev-packages]
 pylint = "*"
