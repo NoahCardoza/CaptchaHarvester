@@ -7,12 +7,6 @@ from urllib.parse import parse_qs
 import store
 
 
-def token_removal(token):
-    store.tokens.append(token)
-    time.sleep(110)
-    store.tokens.remove(token)
-
-
 def my_render_template(file, **args):
     with open('templates/' + file, 'r') as f:
         template = f.read()
@@ -25,15 +19,16 @@ class MyManInTheMiddlePlugin(ManInTheMiddlePlugin):
     overwrite = None
 
     def before_upstream_connection(self, request):
-        if request.url.netloc in store.host_map:
+        host = request.url.netloc.decode()
+        if host in store.host_map:
             if request.method == b'POST':
                 body = parse_qs(request.body)
                 token = body.get(
                     b'g-recaptcha-response') or body.get(b'h-captcha-response')
                 if token:
-                    token = token[0]
-                    Thread(target=token_removal, args=[token.decode()]).start()
-            self.overwrite = request.url.netloc
+                    token = token[0].decode()
+                    store.tokens.put(token)
+            self.overwrite = host
         return request
 
     def handle_upstream_chunk(self, chunk: memoryview):

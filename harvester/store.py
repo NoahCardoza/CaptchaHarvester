@@ -3,4 +3,4 @@ from multiprocessing import Manager
 manger = Manager()
 
 host_map = manger.dict()
-tokens = manger.list()
+tokens = manger.Queue()
