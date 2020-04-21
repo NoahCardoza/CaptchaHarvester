@@ -14,7 +14,7 @@ def my_render_template(file, **args):
     with open(path.join(__dir__, 'templates', file), 'r') as f:
         template = f.read()
         for k, v in args.items():
-            template = template.replace('{{ ' + k + ' }}', v)
+            template = template.replace('{{ ' + str(k) + ' }}', str(v))
     return template
 
 
@@ -45,8 +45,17 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         self.handel_request('POST')
 
     def handel_request(self, method):
+        host, port = self.server.server_address
         if self.path.startswith('/'):
-            if self.path.startswith('/tokens'):
+            if self.path.endswith('.pac'):
+                domain = self.path[1:-4]
+                print(domain)
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/json; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(my_render_template(
+                    'proxy.pac', host=host, port=port, domain=domain).encode('utf-8'))
+            elif self.path.startswith('/tokens'):
                 self.send_response(200)
                 self.send_header('Content-Type', 'text/json; charset=utf-8')
                 self.end_headers()
@@ -80,23 +89,29 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-Type', 'text/html; charset=utf-8')
             self.end_headers()
-            host, port = self.server.server_address
             message = my_render_template(
                 self.config['type'] + '.html', sitekey=self.config['sitekey'], server=f"http://{host}:{port}")
             self.wfile.write(message.encode('utf-8'))
 
 
-def start(host, port, domain, captcha_type, sitekey):
+def setup(host, port, domain, captcha_type, sitekey) -> ThreadingHTTPServer:
     mitm_cache[domain] = {
         'type': captcha_type,
         'sitekey': sitekey
     }
 
-    httpd = ThreadingHTTPServer((host, port), ProxyHTTPRequestHandler)
+    return ThreadingHTTPServer((host, port), ProxyHTTPRequestHandler)
 
+
+def serve(httpd: ThreadingHTTPServer):
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
     finally:
         httpd.shutdown()
+
+
+def start(host, port, domain, captcha_type, sitekey):
+    httpd = setup(host, port, domain, captcha_type, sitekey)
+    serve(httpd)
