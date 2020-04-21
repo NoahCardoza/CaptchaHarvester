@@ -4,8 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-Flask = "*"
-proxy-py = "*"
 requests = "*"
 
 [dev-packages]
