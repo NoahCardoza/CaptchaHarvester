@@ -1,14 +1,17 @@
 import json
 import cgi
 from urllib import parse
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from expiring_queue import ExpiringQueue
+from os import path
 
+__dir__ = path.dirname(path.abspath(__file__))
 tokens = ExpiringQueue(110)
+mitm_cache = {}
 
 
 def my_render_template(file, **args):
-    with open('templates/' + file, 'r') as f:
+    with open(path.join(__dir__, 'templates', file), 'r') as f:
         template = f.read()
         for k, v in args.items():
             template = template.replace('{{ ' + k + ' }}', v)
@@ -18,7 +21,7 @@ def my_render_template(file, **args):
 class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
     def _find_config(self):
         location = parse.urlparse(self.path)
-        self.config = host_map.get(location.netloc)
+        self.config = mitm_cache.get(location.netloc)
         if not self.config:
             self.send_response(404)
 
@@ -33,9 +36,7 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         return self.config
 
     def do_CONNECT(self):
-        # host = self.path.split(':', 1)[0]
         print('WARNING: make sure to use http not https when accessing the host.')
-        self.connection.close()
 
     def do_GET(self):
         self.handel_request('GET')
@@ -79,23 +80,23 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-Type', 'text/html; charset=utf-8')
             self.end_headers()
+            host, port = self.server.server_address
             message = my_render_template(
-                self.config['type'] + '.html', sitekey=self.config['sitekey'])
+                self.config['type'] + '.html', sitekey=self.config['sitekey'], server=f"http://{host}:{port}")
             self.wfile.write(message.encode('utf-8'))
 
 
-if __name__ == '__main__':
-    # TODO: clean this whole file up
-
-    host = '127.0.0.1'
-    proxy_port = 8899
-    flask_port = 8000
-
-    host_map = {}
-    host_map['www.sneakersnstuff.com'] = {
-        'type': 'hcaptcha',
-        'sitekey': '33f96e6a-38cd-421b-bb68-7806e1764460'
+def start(host, port, domain, captcha_type, sitekey):
+    mitm_cache[domain] = {
+        'type': captcha_type,
+        'sitekey': sitekey
     }
 
-    proxy_server = HTTPServer((host, proxy_port), ProxyHTTPRequestHandler)
-    proxy_server.serve_forever()
+    httpd = ThreadingHTTPServer((host, port), ProxyHTTPRequestHandler)
+
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        httpd.shutdown()
