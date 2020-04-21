@@ -1,0 +1,25 @@
+<html>
+<meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
+
+<head>
+    <title>hCaptcha Harvester</title>
+    <script type='text/javascript' src='https://hcaptcha.com/1/api.js' async defer></script>
+</head>
+
+<body>
+    <center>
+        <h3>hCaptcha Token Harvester</h3>
+        <h5>HTML by: @NoahCardoza</h5>
+        <h5>Python by: @NoahCardoza</h5>
+        <form method="post">
+            <div class="h-captcha" data-sitekey="{{ sitekey }}" data-callback="sub"></div>
+            <input type="submit" value="Submit" id="submit">
+        </form>
+        <h5>
+            <a style="text-decoration: none;" href="{{ server }}/tokens" target="_blank">Usable Tokens</a>
+        </h5>
+    </center>
+    <script>function sub() { document.getElementById('submit').click(); }</script>
+</body>
+
+</html>

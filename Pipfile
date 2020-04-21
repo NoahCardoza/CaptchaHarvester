@@ -5,8 +5,6 @@ name = "pypi"
 
 [packages]
 requests = "*"
-selenium = "*"
-Flask = "*"
 
 [dev-packages]
 pylint = "*"
