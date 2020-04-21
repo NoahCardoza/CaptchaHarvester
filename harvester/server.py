@@ -1,48 +1,101 @@
-import ipaddress
-import proxy
-from flask import Flask, Response, jsonify
-import os
-import threading
+import json
+import cgi
+from urllib import parse
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from expiring_queue import ExpiringQueue
-
-if os.name != 'nt':  # avoid freeze_support error on Windows
-    import store
 
 tokens = ExpiringQueue(110)
 
-app = Flask(__name__, static_url_path='/static')
+
+def my_render_template(file, **args):
+    with open('templates/' + file, 'r') as f:
+        template = f.read()
+        for k, v in args.items():
+            template = template.replace('{{ ' + k + ' }}', v)
+    return template
 
 
-@app.route('/tokens', methods=['GET'])
-def tokens_route():
-    return jsonify(list(tokens.queue))
+class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
+    def _find_config(self):
+        location = parse.urlparse(self.path)
+        self.config = host_map.get(location.netloc)
+        if not self.config:
+            self.send_response(404)
 
+            self.send_header('Content-Type', 'text/plain; charset=utf-8')
+            self.end_headers()
 
-@app.route('/token', methods=['GET'])
-def token():
-    if tokens.empty():
-        return Response(status=418)
-    return tokens.get()
+            message = 'CaptchaHarvester {} not being intercepted.'.format(
+                location.netloc)
 
+            self.wfile.write(message.encode('utf-8'))
+            return None
+        return self.config
 
-def start(port=5000, host='127.0.0.1'):
-    app.run(host=host, port=port)
+    def do_CONNECT(self):
+        # host = self.path.split(':', 1)[0]
+        print('WARNING: make sure to use http not https when accessing the host.')
+        self.connection.close()
 
+    def do_GET(self):
+        self.handel_request('GET')
 
-def queue_worker():
-    while True:
-        tokens.put(store.tokens.get())
+    def do_POST(self):
+        self.handel_request('POST')
+
+    def handel_request(self, method):
+        if self.path.startswith('/'):
+            if self.path.startswith('/tokens'):
+                self.send_response(200)
+                self.send_header('Content-Type', 'text/json; charset=utf-8')
+                self.end_headers()
+                self.wfile.write(json.dumps(
+                    list(tokens.queue)).encode('utf-8'))
+            elif self.path.startswith('/token'):
+                if tokens.empty():
+                    self.send_response(418)
+                    self.end_headers()
+                else:
+                    self.send_response(200)
+                    self.send_header(
+                        'Content-Type', 'text/plain; charset=utf-8')
+                    self.end_headers()
+                    self.wfile.write(tokens.get().encode('utf-8'))
+        elif self._find_config():
+            if method == 'POST':
+                form = cgi.FieldStorage(
+                    fp=self.rfile,
+                    headers=self.headers,
+                    environ={
+                        'REQUEST_METHOD': 'POST',
+                        'CONTENT_TYPE': self.headers['Content-Type'],
+                    }
+                )
+                token = form.getvalue(
+                    'h-captcha-response') or form.getvalue('g-recaptcha-response')
+                if token:
+                    tokens.put(token)
+
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/html; charset=utf-8')
+            self.end_headers()
+            message = my_render_template(
+                self.config['type'] + '.html', sitekey=self.config['sitekey'])
+            self.wfile.write(message.encode('utf-8'))
 
 
 if __name__ == '__main__':
-    if os.name == 'nt':  # avoid freeze_support error on Windows
-        import store
+    # TODO: clean this whole file up
 
-    store.host_map['sneakersnstuff.com'] = {
+    host = '127.0.0.1'
+    proxy_port = 8899
+    flask_port = 8000
+
+    host_map = {}
+    host_map['www.sneakersnstuff.com'] = {
         'type': 'hcaptcha',
         'sitekey': '33f96e6a-38cd-421b-bb68-7806e1764460'
     }
 
-    threading.Thread(target=queue_worker, daemon=True).start()
-    with proxy.start(hostname=ipaddress.IPv4Address('127.0.0.1'), plugins='plugin.MyManInTheMiddlePlugin'):
-        start()
+    proxy_server = HTTPServer((host, proxy_port), ProxyHTTPRequestHandler)
+    proxy_server.serve_forever()
