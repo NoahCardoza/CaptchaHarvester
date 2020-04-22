@@ -32,7 +32,7 @@ httpd = server.setup(args.host, args.port, args.domain,
 
 if args.browser:
     host, port = httpd.server_address
-    browser.launch(f'http://{host}:{port}/www.sneakersnstuff.com.pac',
+    browser.launch(args.domain, f'http://{host}:{port}/{args.domain}.pac',
                    browser=args.browser, restart=args.restart_browser)
 
 server.serve(httpd)
