@@ -17,7 +17,17 @@ pipenv install
 ## > harvester
 
 This will setup an HTTP server at `http://127.0.0.1:5000` by default. This server is also
-configured to proxy requests on whichever `DOMAIN` you pass it. Next, install an extention like
+configured to proxy requests on whichever `DOMAIN` you pass it. 
+
+If you are running MacOS/Windows and have the [Brave Browser](https://brave.com/)
+or [Google Chrome](https://www.google.com/chrome/), all you have to do is pass
+the `-b/--browser` flag set to either `chrome` or `brave`. This will automatically open
+a new instance of Brave/Chrome under a temporary profile with the proxy settings already
+configured and loaded at the DOMAIN that was passed to the script. If you want to use
+your main profile, you'll need to pass the `-r/--restart-browser` flag. To reconfigue
+the proxy settings the browser will need to be restarted if it is already running.
+
+If you aren't running MacOS/Windows then you'll need to install a proxy extension like
 [Proxy Switcher and Manager](https://chrome.google.com/webstore/detail/proxy-switcher-and-manage/onnfghpihccifgojkpnnncpagjcdbjod?hl=en)
 that supports **PAC Scripts**. Use a script like:
 
@@ -32,9 +42,12 @@ function FindProxyForURL(url, host) {
 This will make sure that all traffic sent to `DOMAIN` will be proxied by our server and it
 will return one of the template files rather than actually contact the `DOMAIN` server.
 
+> If you would like to come up with an automated solution for your OS, I am open to PR requests.
+
 ```text
 > python harvester -h
 usage: harvester [-h] -k SITE_KEY -d DOMAIN [-H HOST] [-p PORT]
+                 [-b {chrome,brave}] [-r]
                  {recaptcha,hcaptcha}
 
 CaptchaHarvester: Solve captchas yourself without having to pay for services
@@ -51,6 +64,14 @@ optional arguments:
                         the domain for which you want to solve captchas
   -H HOST, --host HOST  defaults to 127.0.0.1
   -p PORT, --port PORT  defaults to 5000
+  -b {chrome,brave}, --browser {chrome,brave}
+                        which browser to open on launch
+  -r, --restart-browser
+                        if this flag is not passed, a new instance of the
+                        browser willbe opened. this flag is most helpful when
+                        solving Googles ReCaptchasbecause if you restat your
+                        main profile you'll most likely be loggedinto Google
+                        and will be given an easier time on the captchas
 
 For help contact @MacHacker#7322 (Discord)
 ```
