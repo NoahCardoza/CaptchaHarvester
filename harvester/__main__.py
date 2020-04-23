@@ -1,6 +1,6 @@
 import argparse
-import server
 import browser
+import server
 
 ap = argparse.ArgumentParser(
     description='CaptchaHarvester: Solve captchas yourself without having to pay for services like 2captcha for use in automated projects.',
@@ -27,12 +27,13 @@ args = ap.parse_args()
 
 print(f'server running on http://{args.host}:{args.port}')
 
-httpd = server.setup(args.host, args.port, args.domain,
-                     args.type, args.site_key)
+server_address = (args.host, args.port)
+
+httpd = server.setup(server_address, args.domain,
+                     server.CaptchaKindEnum(args.type), args.site_key)
 
 if args.browser:
-    host, port = httpd.server_address
-    browser.launch(args.domain, f'http://{host}:{port}/{args.domain}.pac',
-                   browser=args.browser, restart=args.restart_browser)
+    browser.launch(args.domain, httpd.server_address,
+                   browser=browser.BrowserEnum(args.browser), restart=args.restart_browser)
 
 server.serve(httpd)
