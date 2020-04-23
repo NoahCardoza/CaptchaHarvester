@@ -1,6 +1,8 @@
 import platform
 import os
 from uuid import uuid4
+from enum import Enum
+from typing import Tuple
 
 browsers = {
     'chrome': 'Google Chrome',
@@ -8,8 +10,15 @@ browsers = {
 }
 
 
-def launch(domain, pac_script, browser='chrome', restart=False):
+class BrowserEnum(Enum):
+    CHROME = 'chrome'
+    BRAVE = 'brave'
+
+
+def launch(domain: str, server_address: Tuple[str, int], browser: BrowserEnum = BrowserEnum.CHROME, restart: bool = False):
     user_dir = ''
+    browser = browser.value
+    pac_script_url = f'http://{server_address[0]}:{server_address[1]}/{domain}.pac'
     app = browsers.get(browser)
     if not app:
         raise ValueError('no configuration for `{}` browser'.format(browser))
@@ -21,7 +30,7 @@ def launch(domain, pac_script, browser='chrome', restart=False):
         else:
             os.system(f'killall "{app}"')
         os.system(
-            f"open -a '{app}' -n --args --proxy-pac-url='{pac_script}' {user_dir} {domain}")
+            f"open -a '{app}' -n --args --proxy-pac-url='{pac_script_url}' {user_dir} {domain}")
     elif system == 'Windows':
         if not restart:
             user_dir = '--user-data-dir=' + \
@@ -29,7 +38,7 @@ def launch(domain, pac_script, browser='chrome', restart=False):
         else:
             os.system(f'TASKKILL /IM {browser}.exe /F')
         os.system(
-            f'start {browser} --proxy-pac-url="{pac_script}" {user_dir} {domain}')
+            f'start {browser} --proxy-pac-url="{pac_script_url}" {user_dir} {domain}')
     else:
         raise RuntimeError(
             'automatic broswer functinality only avalible on MacOS and Windows for now')
