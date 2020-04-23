@@ -1,0 +1,122 @@
+import json
+import cgi
+from os import path
+from enum import Enum
+from urllib import parse
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from .expiring_queue import ExpiringQueue
+from queue import SimpleQueue
+from dataclasses import dataclass
+from typing import Dict, Union, Tuple
+
+
+class CaptchaKindEnum(Enum):
+    HCAPTCHA = 'hcaptcha'
+    RECAPTCHA = 'recaptcha'
+
+
+@dataclass
+class MITMRecord:
+    kind: CaptchaKindEnum
+    sitekey: str
+
+
+__dir__ = path.dirname(path.abspath(__file__))
+MITM_CAHCE: Dict[str, MITMRecord] = {}
+tokens: 'SimpleQueue[str]' = ExpiringQueue(110)
+
+
+class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
+    def _render_template(self, file: str, **args: Dict[str, Union[str, int]]):
+        with open(path.join(__dir__, 'templates', file), 'r') as f:
+            template = f.read()
+        for k, v in args.items():
+            template = template.replace('{{ ' + k + ' }}', str(v))
+
+        self.wfile.write(template.encode('utf-8'))
+
+    def _find_config(self):
+        location = parse.urlparse(self.path)
+        self.config = MITM_CAHCE.get(location.netloc)
+        if not self.config:
+            self.send_error(404,
+                            'Not intercepted',
+                            'CaptchaHarvester not intercepting ' + location.netloc)
+            return None
+        return self.config
+
+    def _simple_headers(self, code: int, content_type: str):
+        self.send_response(code)
+        self.send_header('Content-Type', content_type)
+        self.end_headers()
+
+    def do_CONNECT(self):
+        self.send_error(
+            500, "Yuck! hTtPs", 'Make sure to use http:// not https:// when accessing the host though the proxy server')
+
+    def do_GET(self):
+        self.handel_request('GET')
+
+    def do_POST(self):
+        self.handel_request('POST')
+
+    def handel_request(self, method: str):
+        host, port = self.server.server_address
+        if self.path.startswith('/'):
+            if self.path.endswith('.pac'):
+                domain = self.path[1:-4]
+                self._simple_headers(200, 'text/plain; charset=utf-8')
+                self._render_template('proxy.pac',
+                                      host=host,
+                                      port=port,
+                                      domain=domain)
+            elif self.path.startswith('/tokens'):
+                self._simple_headers(200, 'text/json; charset=utf-8')
+                self.wfile.write(
+                    json.dumps(list(tokens.queue)).encode('utf-8'))
+            elif self.path.startswith('/token'):
+                if tokens.empty():
+                    self.send_error(
+                        418, "I am a teapot and I have no tokens right now", 'Any attempt to brew coffee with a teapot should result in the error code "418 I\'m a teapot"')
+                else:
+                    self._simple_headers(200, 'text/plain; charset=utf-8')
+                    self.wfile.write(tokens.get().encode('utf-8'))
+        elif self._find_config():
+            if method == 'POST':
+                form = cgi.FieldStorage(
+                    fp=self.rfile,
+                    headers=self.headers,
+                    environ={
+                        'REQUEST_METHOD': 'POST',
+                        'CONTENT_TYPE': self.headers['Content-Type'],
+                    }
+                )
+                token = form.getvalue(
+                    'h-captcha-response') or form.getvalue('g-recaptcha-response')
+                if token:
+                    print(token, tokens)
+                    tokens.put(token)
+                    print(token, tokens)
+            self._simple_headers(200, 'text/html; charset=utf-8')
+            self._render_template(self.config.kind.value + '.html',
+                                  sitekey=self.config.sitekey,
+                                  server=f"http://{host}:{port}")
+
+
+def setup(server_address: Tuple[str, int], domain: str, captcha_kind: CaptchaKindEnum, sitekey: str) -> ThreadingHTTPServer:
+    MITM_CAHCE[domain] = MITMRecord(captcha_kind, sitekey)
+    return ThreadingHTTPServer(server_address, ProxyHTTPRequestHandler)
+
+
+def serve(httpd: ThreadingHTTPServer):
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        httpd.shutdown()
+
+
+def start(server_address: Tuple[str, int], domain: str, captcha_kind: CaptchaKindEnum, sitekey: str):
+    httpd = setup(server_address, domain, captcha_kind, sitekey)
+    serve(httpd)
