@@ -5,7 +5,7 @@ from enum import Enum
 from urllib import parse
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from .expiring_queue import ExpiringQueue
-from queue import SimpleQueue
+from queue import Queue
 from dataclasses import dataclass
 from typing import Dict, Union, Tuple
 import logging
@@ -32,7 +32,7 @@ class MITMRecord:
 
 __dir__ = path.dirname(path.abspath(__file__))
 MITM_CAHCE: Dict[str, MITMRecord] = {}
-tokens: 'SimpleQueue[str]' = ExpiringQueue(110)
+tokens: 'ExpiringQueue[str]' = ExpiringQueue(110)
 
 
 class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
@@ -82,7 +82,7 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
             elif self.path.startswith('/tokens'):
                 self._simple_headers(200, 'text/json; charset=utf-8')
                 self.wfile.write(
-                    json.dumps(list(tokens.queue)).encode('utf-8'))
+                    json.dumps(tokens.to_list()).encode('utf-8'))
             elif self.path.startswith('/token'):
                 if tokens.empty():
                     self.send_error(
