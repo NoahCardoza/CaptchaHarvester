@@ -8,6 +8,7 @@ name = "pypi"
 [dev-packages]
 pylint = "*"
 "autopep8" = "*"
+twine = "*"
 
 [requires]
 python_version = "3.7"
