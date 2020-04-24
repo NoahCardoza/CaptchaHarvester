@@ -9,15 +9,13 @@ At the moment this project can be used for Google's V2 ReCaptchas and hCaptchas.
 ## setup
 
 ```bash
-git clone https://github.com/NoahCardoza/CaptchaHarvester
-cd CaptchaHarvester
-pipenv install
+pip install captcha-harvester
 ```
 
 ## > harvester
 
 This will setup an HTTP server at `http://127.0.0.1:5000` by default. This server is also
-configured to proxy requests on whichever `DOMAIN` you pass it. 
+configured to proxy requests on whichever `DOMAIN` you pass it.
 
 If you are running MacOS/Windows and have the [Brave Browser](https://brave.com/)
 or [Google Chrome](https://www.google.com/chrome/), all you have to do is pass
@@ -45,7 +43,7 @@ will return one of the template files rather than actually contact the `DOMAIN` 
 > If you would like to come up with an automated solution for your OS, I am open to PR requests.
 
 ```text
-> python harvester -h
+> harvester -h
 usage: harvester [-h] -k SITE_KEY -d DOMAIN [-H HOST] [-p PORT]
                  [-b {chrome,brave}] [-r]
                  {recaptcha,hcaptcha}
@@ -78,11 +76,20 @@ For help contact @MacHacker#7322 (Discord)
 
 ## accessing the tokens
 
+You can either access the tokens from another project/process by useing the
+handy `fetch.token` function I included:
+
 ```python
-from harvester.fetch import getToken
-token = getToken('localhost:5000')
-print('Token:', token)
+from harvester import fetch
+
+server_address = ('127.0.0.1', 5000)
+token = fetch.token(server_address)
+print('token:', token)
 ```
+
+Or you can check out [example.py](example.py) to see how to progamatically
+start the server and access the tokens by integrating the harvester with
+your existsing (or new) code.
 
 ## credits
 

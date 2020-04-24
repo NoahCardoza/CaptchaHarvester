@@ -29,6 +29,6 @@ try:
     while True:
         # block until we get sent a captcha token and repeat
         token = harvester.tokens.get()
-        print('we have a token:', token)
+        print('we just recived a token:', token)
 except KeyboardInterrupt:
     pass
