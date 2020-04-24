@@ -1,13 +1,19 @@
-from requests import get
+import urllib3
 from time import sleep
+from typing import Tuple
 
 
-# TODO: MAYBE convert to iteratoer/class?
-def getToken(host, timeout=3):
-    uri = 'http://' + host + '/token'
-    res = get(uri)
-    while True:
-        if res.ok():
-            return res.text
+def token(server_address: Tuple[str, int], timeout=3) -> str:
+    url = f'http://{server_address[0]}:{server_address[1]}/token'
+    http = urllib3.PoolManager()
+    res = http.request('GET', url)
+    while res.status != 200:
+        print(res, res.status, res.data)
         sleep(timeout)
-        res = get(uri)
+        res = http.request('GET', url)
+    return res.data.decode('ascii')
+
+
+if __name__ == '__main__':
+    server_address = ('127.0.0.1', 5000)
+    print(token(server_address))
