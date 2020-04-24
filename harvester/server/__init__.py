@@ -8,6 +8,15 @@ from .expiring_queue import ExpiringQueue
 from queue import SimpleQueue
 from dataclasses import dataclass
 from typing import Dict, Union, Tuple
+import logging
+import sys
+
+log = logging.getLogger('harvester')
+sh = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter(
+    '%(name)s(%(levelname)s) [%(timestamp)s] [%(address)s] %(message)s')
+sh.setFormatter(formatter)
+log.addHandler(sh)
 
 
 class CaptchaKindEnum(Enum):
@@ -94,13 +103,23 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
                 token = form.getvalue(
                     'h-captcha-response') or form.getvalue('g-recaptcha-response')
                 if token:
-                    print(token, tokens)
                     tokens.put(token)
-                    print(token, tokens)
             self._simple_headers(200, 'text/html; charset=utf-8')
             self._render_template(self.config.kind.value + '.html',
                                   sitekey=self.config.sitekey,
                                   server=f"http://{host}:{port}")
+
+    def log_error(self, format, *args):
+        log.error(format % args, extra={
+            'timestamp': self.log_date_time_string(),
+            'address': self.address_string()
+        })
+
+    def log_message(self, format, *args):
+        log.info(format % args, extra={
+            'timestamp': self.log_date_time_string(),
+            'address': self.address_string()
+        })
 
 
 def setup(server_address: Tuple[str, int], domain: str, captcha_kind: CaptchaKindEnum, sitekey: str) -> ThreadingHTTPServer:
