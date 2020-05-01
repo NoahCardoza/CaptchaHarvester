@@ -143,3 +143,4 @@ cython_debug/
 # My stuff
 .DS_Store
 .vscode/
+challenge-bypass-extension/
