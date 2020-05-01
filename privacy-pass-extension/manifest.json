@@ -1,0 +1,29 @@
+{
+  "description": "Handles passes containing cryptographically blinded tokens for bypassing internet challenge.",
+  "manifest_version": 2,
+  "name": "Privacy Pass",
+  "version": "2.0.6",
+  "icons": {
+    "48": "icons/ticket-48.png"
+  },
+  "background": {
+    "scripts": [
+        "build.js"
+    ]
+  },
+  "permissions": [
+    "alarms",
+    "cookies",
+    "<all_urls>",
+    "storage",
+    "tabs",
+    "webRequest",
+    "webRequestBlocking",
+    "webNavigation"
+  ],
+  "browser_action": {
+    "default_icon": "icons/ticket-empty-32.png",
+    "default_title": "Privacy Pass",
+    "default_popup": "popup/bc-plugin.html"
+  }
+}
