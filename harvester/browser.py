@@ -4,6 +4,10 @@ from uuid import uuid4
 from enum import Enum
 from typing import Tuple
 
+__dir__ = os.path.dirname(os.path.abspath(__file__))
+EXTENSION_PATH = os.path.join(
+    os.path.dirname(__dir__), 'privacy-pass-extension')
+
 browsers = {
     'chrome': 'Google Chrome',
     'brave': 'Brave Browser'
@@ -30,7 +34,7 @@ def launch(domain: str, server_address: Tuple[str, int], browser: BrowserEnum = 
         else:
             os.system(f'killall "{app}"')
         os.system(
-            f"open -a '{app}' -n --args --proxy-pac-url='{pac_script_url}' {user_dir} {domain}")
+            f"open -a '{app}' -n --args --proxy-pac-url='{pac_script_url}' --load-extension={EXTENSION_PATH} {user_dir} {domain}")
     elif system == 'Windows':
         if not restart:
             user_dir = '--user-data-dir=' + \
@@ -38,7 +42,7 @@ def launch(domain: str, server_address: Tuple[str, int], browser: BrowserEnum = 
         else:
             os.system(f'TASKKILL /IM {browser}.exe /F')
         os.system(
-            f'start {browser} --proxy-pac-url="{pac_script_url}" {user_dir} {domain}')
+            f'start {browser} --proxy-pac-url="{pac_script_url}" --load-extension={EXTENSION_PATH} {user_dir} {domain}')
     else:
         raise RuntimeError(
             'automatic broswer functinality only avalible on MacOS and Windows for now')
