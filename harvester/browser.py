@@ -15,8 +15,8 @@ class BrowserEnum(Enum):
     BRAVE = 'brave'
 
 
-def launch(domain: str, server_address: Tuple[str, int], browser: BrowserEnum = BrowserEnum.CHROME, restart: bool = False):
-    user_dir = ''
+def launch(domain: str, server_address: Tuple[str, int], browser: BrowserEnum = BrowserEnum.CHROME,
+           restart: bool = False, width: int = 400, height: int = 580):
     browser = browser.value
     pac_script_url = f'http://{server_address[0]}:{server_address[1]}/{domain}.pac'
     app = browsers.get(browser)
@@ -24,21 +24,28 @@ def launch(domain: str, server_address: Tuple[str, int], browser: BrowserEnum = 
         raise ValueError('no configuration for `{}` browser'.format(browser))
 
     system = platform.system()
+    browser_command = []
     if system == 'Darwin':
+        browser_command.append(f"open -a '{app}' -n --args")
         if not restart:
-            user_dir = '--user-data-dir=/tmp/havester/' + str(uuid4())
+            browser_command.append(
+                f'--quarantine-dir=/tmp/havester/{str(uuid4())}')
         else:
             os.system(f'killall "{app}"')
-        os.system(
-            f"open -a '{app}' -n --args --proxy-pac-url='{pac_script_url}' {user_dir} {domain}")
     elif system == 'Windows':
         if not restart:
-            user_dir = '--user-data-dir=' + \
-                os.path.join(os.environ['TEMP'], 'harvester', str(uuid4()))
+            browser_command.append(
+                f"--quarantine-dir={os.path.join(os.environ['TEMP'], 'harvester', str(uuid4()))}")
         else:
             os.system(f'TASKKILL /IM {browser}.exe /F')
-        os.system(
-            f'start {browser} --proxy-pac-url="{pac_script_url}" {user_dir} {domain}')
     else:
         raise RuntimeError(
-            'automatic broswer functinality only avalible on MacOS and Windows for now')
+            'Automatic broswer functinality only avalible on MacOS and Windows for now')
+
+    browser_command.extend((
+        f'--proxy-pac-url="{pac_script_url}"',
+        f"--window-size={width},{height}",
+        f'--app="http://{domain}"'
+    ))
+
+    os.system(' '.join(browser_command))
