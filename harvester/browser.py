@@ -29,13 +29,13 @@ def launch(domain: str, server_address: Tuple[str, int], browser: BrowserEnum = 
         browser_command.append(f"open -a '{app}' -n --args")
         if not restart:
             browser_command.append(
-                f'--quarantine-dir=/tmp/havester/{str(uuid4())}')
+                f'--user-data-dir=/tmp/havester/{str(uuid4())}')
         else:
             os.system(f'killall "{app}"')
     elif system == 'Windows':
         if not restart:
             browser_command.append(
-                f"--quarantine-dir={os.path.join(os.environ['TEMP'], 'harvester', str(uuid4()))}")
+                f"--user-data-dir={os.path.join(os.environ['TEMP'], 'harvester', str(uuid4()))}")
         else:
             os.system(f'TASKKILL /IM {browser}.exe /F')
     else:
@@ -43,6 +43,7 @@ def launch(domain: str, server_address: Tuple[str, int], browser: BrowserEnum = 
             'Automatic broswer functinality only avalible on MacOS and Windows for now')
 
     browser_command.extend((
+        "--no-default-browser-check",
         f'--proxy-pac-url="{pac_script_url}"',
         f"--window-size={width},{height}",
         f'--app="http://{domain}"'
