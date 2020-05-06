@@ -76,7 +76,7 @@ For help contact @MacHacker#7322 (Discord)
 
 ## accessing the tokens
 
-You can either access the tokens from another project/process by useing the
+You can either access the tokens from another python project/process by using the
 handy `fetch.token` function I included:
 
 ```python
@@ -90,6 +90,10 @@ print('token:', token)
 Or you can check out [example.py](example.py) to see how to progamatically
 start the server and access the tokens by integrating the harvester with
 your existsing (or new) code.
+
+Additionally, if your other project isn't using Python, you can call `/token` which
+will return one token and remove it from the Queue. If no tokens exists it will return
+HTTP error code 418 "I'm a teapot."
 
 ## credits
 
