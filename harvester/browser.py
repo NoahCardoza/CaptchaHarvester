@@ -52,6 +52,4 @@ def launch(domain: str, server_address: Tuple[str, int], browser: BrowserEnum = 
         f'--app="http://{domain}"'
     ))
 
-    print(browser_command)
-
     os.system(' '.join(browser_command))
