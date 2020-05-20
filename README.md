@@ -14,7 +14,7 @@ pip install captcha-harvester
 
 ## > harvester
 
-This will setup an HTTP server at `http://127.0.0.1:5000` by default. This server is also
+This will setup an HTTP server at `https://127.0.0.1:5000` by default. This server is also
 configured to proxy requests on whichever `DOMAIN` you pass it.
 
 If you are running MacOS/Windows and have the [Brave Browser](https://brave.com/)

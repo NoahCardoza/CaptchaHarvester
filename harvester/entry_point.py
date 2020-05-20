@@ -35,7 +35,7 @@ def entry_point():
         log = logging.getLogger('harvester')
         log.setLevel(logging.INFO)
 
-    print(f'server running on http://{args.host}:{args.port}')
+    print(f'server running on https://{args.host}:{args.port}')
 
     server_address = (args.host, args.port)
 

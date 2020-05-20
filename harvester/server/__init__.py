@@ -1,3 +1,4 @@
+from OpenSSL import crypto, SSL
 import json
 import cgi
 from os import path
@@ -10,6 +11,7 @@ from dataclasses import dataclass
 from typing import Dict, Union, Tuple
 import logging
 import sys
+import ssl
 
 log = logging.getLogger('harvester')
 sh = logging.StreamHandler(sys.stdout)
@@ -17,6 +19,49 @@ formatter = logging.Formatter(
     '%(name)s(%(levelname)s) [%(timestamp)s] [%(address)s] %(message)s')
 sh.setFormatter(formatter)
 log.addHandler(sh)
+
+
+def cert_gen(
+        emailAddress="emailAddress",
+        commonName="commonName",
+        countryName="NT",
+        localityName="localityName",
+        stateOrProvinceName="stateOrProvinceName",
+        organizationName="organizationName",
+        organizationUnitName="organizationUnitName",
+        serialNumber=0,
+        validityStartInSeconds=0,
+        validityEndInSeconds=10*365*24*60*60,
+        KEY_FILE="private.key",
+        CERT_FILE="selfsigned.crt"):
+    # can look at generated file using openssl:
+    # openssl x509 -inform pem -in selfsigned.crt -noout -text
+    # create a key pair
+    k = crypto.PKey()
+    k.generate_key(crypto.TYPE_RSA, 4096)
+    # create a self-signed cert
+    cert = crypto.X509()
+    cert.get_subject().C = countryName
+    cert.get_subject().ST = stateOrProvinceName
+    cert.get_subject().L = localityName
+    cert.get_subject().O = organizationName
+    cert.get_subject().OU = organizationUnitName
+    cert.get_subject().CN = commonName
+    cert.get_subject().emailAddress = emailAddress
+    cert.set_serial_number(serialNumber)
+    cert.gmtime_adj_notBefore(0)
+    cert.gmtime_adj_notAfter(validityEndInSeconds)
+    cert.set_issuer(cert.get_subject())
+    cert.set_pubkey(k)
+    cert.sign(k, 'sha512')
+    with open(CERT_FILE, "wt") as f:
+        f.write(crypto.dump_certificate(
+            crypto.FILETYPE_PEM, cert).decode("utf-8"))
+    with open(KEY_FILE, "wt") as f:
+        f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode("utf-8"))
+
+
+cert_gen()
 
 
 class CaptchaKindEnum(Enum):
@@ -71,26 +116,8 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
 
     def handel_request(self, method: str):
         host, port = self.server.server_address
-        if self.path.startswith('/'):
-            if self.path.endswith('.pac'):
-                domain = self.path[1:-4]
-                self._simple_headers(200, 'text/plain; charset=utf-8')
-                self._render_template('proxy.pac',
-                                      host=host,
-                                      port=port,
-                                      domain=domain)
-            elif self.path.startswith('/tokens'):
-                self._simple_headers(200, 'text/json; charset=utf-8')
-                self.wfile.write(
-                    json.dumps(tokens.to_list()).encode('utf-8'))
-            elif self.path.startswith('/token'):
-                if tokens.empty():
-                    self.send_error(
-                        418, "I am a teapot and I have no tokens right now", 'Any attempt to brew coffee with a teapot should result in the error code "418 I\'m a teapot"')
-                else:
-                    self._simple_headers(200, 'text/plain; charset=utf-8')
-                    self.wfile.write(tokens.get().encode('utf-8'))
-        elif self._find_config():
+        if self.path == '/':
+            self.config = MITM_CAHCE.get(self.server.domain)
             if method == 'POST':
                 form = cgi.FieldStorage(
                     fp=self.rfile,
@@ -106,8 +133,28 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
                     tokens.put(token)
             self._simple_headers(200, 'text/html; charset=utf-8')
             self._render_template(self.config.kind.value + '.html',
+                                  domain=self.path,
                                   sitekey=self.config.sitekey,
-                                  server=f"http://{host}:{port}")
+                                  server=f"https://{host}:{port}")
+        elif self.path.endswith('.pac'):
+            domain = self.path[1:-4]
+            self._simple_headers(200, 'text/plain; charset=utf-8')
+            self._render_template('proxy.pac',
+                                  host=host,
+                                  port=port,
+                                  domain=domain)
+        elif self.path.startswith('/tokens'):
+            self._simple_headers(200, 'text/json; charset=utf-8')
+            self.wfile.write(
+                json.dumps(tokens.to_list()).encode('utf-8'))
+        elif self.path.startswith('/token'):
+            if tokens.empty():
+                self.send_error(
+                    418, "I am a teapot and I have no tokens right now", 'Any attempt to brew coffee with a teapot should result in the error code "418 I\'m a teapot"')
+            else:
+                self._simple_headers(200, 'text/plain; charset=utf-8')
+                self.wfile.write(tokens.get().encode('utf-8'))
+        # elif self._find_config():
 
     def log_error(self, format, *args):
         log.error(format % args, extra={
@@ -124,7 +171,12 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
 
 def setup(server_address: Tuple[str, int], domain: str, captcha_kind: CaptchaKindEnum, sitekey: str) -> ThreadingHTTPServer:
     MITM_CAHCE[domain] = MITMRecord(captcha_kind, sitekey)
-    return ThreadingHTTPServer(server_address, ProxyHTTPRequestHandler)
+    httpd = ThreadingHTTPServer(server_address, ProxyHTTPRequestHandler)
+    httpd.domain = domain
+    httpd.socket = ssl.wrap_socket(httpd.socket,
+                                   keyfile=path.join(__dir__, 'server.key'),
+                                   certfile=path.join(__dir__, 'server.crt'), server_side=True)
+    return httpd
 
 
 def serve(httpd: ThreadingHTTPServer):

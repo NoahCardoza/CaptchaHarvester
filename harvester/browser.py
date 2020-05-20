@@ -46,10 +46,16 @@ def launch(domain: str, server_address: Tuple[str, int], browser: BrowserEnum = 
 
     browser_command.extend(browser_args)
     browser_command.extend((
+        # "--disable-web-security",
+        # "--disable-http2",
+        "--ignore-certificate-errors",
+        "--ignore-urlfetcher-cert-requests",
         "--no-default-browser-check",
-        f'--proxy-pac-url="{pac_script_url}"',
+
+        f'--host-rules="MAP {domain} {server_address[0]}:{server_address[1]}"',
+        # f'--proxy-pac-url="{pac_script_url}"',
         f"--window-size={width},{height}",
-        f'--app="http://{domain}"'
+        f'--app="https://{domain}"'
     ))
 
     os.system(' '.join(browser_command))
