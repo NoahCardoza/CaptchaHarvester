@@ -8,8 +8,16 @@ At the moment this project can be used for Google's V2 ReCaptchas and hCaptchas.
 
 ## setup
 
+### PyPi
+
 ```bash
 pip install captcha-harvester
+```
+
+### The `dev` branch
+
+```bash
+pip install https://github.com/NoahCardoza/CaptchaHarvester/archive/dev.zip
 ```
 
 ## > harvester
