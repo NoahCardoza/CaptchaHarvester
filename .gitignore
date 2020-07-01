@@ -145,3 +145,5 @@ cython_debug/
 # My stuff
 .DS_Store
 .vscode/
+sendv3.py
+snippets.py
