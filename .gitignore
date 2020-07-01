@@ -1,4 +1,6 @@
 harvester.py
+private.key
+selfsigned.crt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -143,3 +145,5 @@ cython_debug/
 # My stuff
 .DS_Store
 .vscode/
+sendv3.py
+snippets.py

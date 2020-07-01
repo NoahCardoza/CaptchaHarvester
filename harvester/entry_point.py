@@ -9,7 +9,7 @@ def entry_point():
     ap = argparse.ArgumentParser(
         description='CaptchaHarvester: Solve captchas yourself without having to pay for services like 2captcha for use in automated projects.',
         epilog='For help contact @MacHacker#7322 (Discord)')
-    ap.add_argument('type', choices=['recaptcha', 'hcaptcha'],
+    ap.add_argument('type', choices=['recaptcha-v2', 'recaptcha-v3', 'hcaptcha'],
                     help='the type of captcha you are want to solve')
     ap.add_argument('-k', '--site-key', required=True,
                     help='the sitekey used by the captcha on page')
@@ -35,7 +35,7 @@ def entry_point():
         log = logging.getLogger('harvester')
         log.setLevel(logging.INFO)
 
-    print(f'server running on http://{args.host}:{args.port}')
+    print(f'server running on https://{args.host}:{args.port}')
 
     server_address = (args.host, args.port)
 

@@ -1,0 +1,36 @@
+<html>
+<meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
+
+<head>
+    <title>ReCaptcha Harvester</title>
+
+    <script type='text/javascript' src='https://www.google.com/recaptcha/api.js?render={{ sitekey }}'></script>
+</head>
+
+<body>
+    <center>
+        <h3>hCaptcha Token Harvester</h3>
+        <h5>HTML by: @NoahCardoza</h5>
+        <h5>Python by: @NoahCardoza</h5>
+        <form method="post">
+            <input type="text" id="g-recaptcha-response" name="g-recaptcha-response">
+            <input type="submit" value="Submit" id="submit">
+        </form>
+        <h5>
+            <a style="text-decoration: none;" href="{{ server }}/tokens" target="_blank">Usable Tokens</a>
+        </h5>
+    </center>
+    <script>
+        grecaptcha.ready(function () {
+            console.log('ready')
+            grecaptcha.execute('{{ sitekey }}', { action: 'homepage' })
+                .then(function (token) {
+                    console.log(token)
+                    document.getElementById('g-recaptcha-response').value = token;
+                });
+        });
+
+    </script>
+</body>
+
+</html>
