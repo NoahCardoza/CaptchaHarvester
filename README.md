@@ -4,7 +4,7 @@
 
 ## note
 
-At the moment this project can be used for Google's V2 ReCaptchas and hCaptchas.
+At the moment this project can be used for Google's V2 and V3 ReCaptchas and hCaptchas.
 
 ## setup
 
@@ -15,6 +15,10 @@ pip install captcha-harvester
 ```
 
 ### The `dev` branch
+
+Sometimes there will be updates I'm working on that won't be pushed to the master branch/PyPi
+because I haven't had time to test them. Sometimes these patches will fix problems you experience
+in the stable branch, but if things get buggy don't be surprised.
 
 ```bash
 pip install https://github.com/NoahCardoza/CaptchaHarvester/archive/dev.zip
@@ -34,15 +38,16 @@ local server.
 
 ```text
 > harvester -h
-usage: harvester [-h] -k SITE_KEY -d DOMAIN [-H HOST] [-p PORT]
-                 [-b {chrome,brave}] [-r] [-v]
-                 {recaptcha,hcaptcha}
+usage: harvester.py [-h] -k SITE_KEY -d DOMAIN [-H HOST] [-p PORT]
+                    [-b {chrome,brave}] [-r] [-v]
+                    {recaptcha-v2,recaptcha-v3,hcaptcha}
 
 CaptchaHarvester: Solve captchas yourself without having to pay for services
 like 2captcha for use in automated projects.
 
 positional arguments:
-  {recaptcha,hcaptcha}  the type of captcha you are want to solve
+  {recaptcha-v2,recaptcha-v3,hcaptcha}
+                        the type of captcha you are want to solve
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -64,6 +69,13 @@ optional arguments:
 
 For help contact @MacHacker#7322 (Discord)
 ```
+
+## v2 vs. v3
+
+When solving Google's v3 captchas, you should login to a Google Account first. The v3 captcha's
+work of a raiting system of your browsing habits. They are a little finicky compared to their v2
+predecessors. If the tokens stop working, you should start using a different Google Account or
+wait a little bit between relaoding the captcha harvester page.
 
 ## accessing the tokens
 
