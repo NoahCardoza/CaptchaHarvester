@@ -22,7 +22,8 @@ log.addHandler(sh)
 
 class CaptchaKindEnum(Enum):
     HCAPTCHA = 'hcaptcha'
-    RECAPTCHA = 'recaptcha'
+    RECAPTCHA_V2 = 'recaptcha-v2'
+    RECAPTCHA_V3 = 'recaptcha-v3'
 
 
 @dataclass
