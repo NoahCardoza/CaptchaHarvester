@@ -1,4 +1,5 @@
 include harvester/server/templates/*
+include harvester/server/server.crt
+include harvester/server/server.key
 include README.md
 include LICENSE
-include requirements.txt
