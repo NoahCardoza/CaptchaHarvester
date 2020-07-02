@@ -2,9 +2,15 @@
 
 > Solve captchas yourself without having to pay for services like 2captcha for use in automated projects.
 
-## note
+## use cases
 
-At the moment this project can be used for Google's V2 and V3 ReCaptchas and hCaptchas.
+This project allows you to solve Google's V2 and V3 ReCaptchas as well as
+hCaptchas. However, since Google's V3 ReCaptchas are based on a rating
+system of your browser and browsing habbits, it's slightly less reliable.
+
+## help
+
+If you need help or want to ask questions: checkout the harvesters dedicated [discord server](https://discord.gg/AAQrkhR).
 
 ## setup
 
@@ -14,7 +20,7 @@ At the moment this project can be used for Google's V2 and V3 ReCaptchas and hCa
 pip install captcha-harvester
 ```
 
-### The `dev` branch
+### the `dev` branch
 
 Sometimes there will be updates I'm working on that won't be pushed to the master branch/PyPi
 because I haven't had time to test them. Sometimes these patches will fix problems you experience
@@ -23,6 +29,8 @@ in the stable branch, but if things get buggy don't be surprised.
 ```bash
 pip install https://github.com/NoahCardoza/CaptchaHarvester/archive/dev.zip
 ```
+
+## usage
 
 ## > harvester
 
@@ -70,7 +78,7 @@ optional arguments:
 For help contact @MacHacker#7322 (Discord)
 ```
 
-## v2 vs. v3
+## ReCaptcha: V2 vs. V3
 
 When solving Google's v3 captchas, you should login to a Google Account first. The v3 captcha's
 work of a raiting system of your browsing habits. They are a little finicky compared to their v2
@@ -107,7 +115,7 @@ program to ignore these errors.
 
 Inspred by [Cosmo3904/Recaptcha-Harvester-V2](https://github.com/Cosmo3904/Recaptcha-Harvester-V2).
 
-For help contact @MacHacker#7322 (Discord)
+For help contact @`MacHacker#7322` (Discord)
 
 Has CaptchaHarvester saved you money on your project? Consider buying me a coffee!
 
