@@ -10,7 +10,7 @@ system of your browser and browsing habbits, it's slightly less reliable.
 
 ## help
 
-If you need help or want to ask questions: checkout the harvesters dedicated [discord server](https://discord.gg/AAQrkhR).
+If you need help or want to ask questions: checkout the harvester's dedicated [discord server](https://discord.gg/AAQrkhR).
 
 ## setup
 
