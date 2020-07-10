@@ -42,6 +42,11 @@ the `-b/--browser` flag set to either `chrome` or `brave`. This will automatical
 a new instance of Brave/Chrome under a temporary profile with and map the `domain` to the
 local server.
 
+**NOTE**: Without the `-b/--browser` only the server will start up, without the browser. You won't
+be able to access the site correctly on your normal browsers because the host won't be correctly
+mapped to the local server. This could be useful if you want to open the browser with your own
+command line options or you already have one running from a previous session.
+
 > If you would like to come up with an automated solution for your OS, I am open to PR requests.
 
 ```text
