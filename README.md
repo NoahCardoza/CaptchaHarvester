@@ -6,7 +6,7 @@
 
 This project allows you to solve Google's V2 and V3 ReCaptchas as well as
 hCaptchas. However, since Google's V3 ReCaptchas are based on a rating
-system of your browser and browsing habbits, it's slightly less reliable.
+system of your browser and browsing habits, it's slightly less reliable.
 
 ## help
 
