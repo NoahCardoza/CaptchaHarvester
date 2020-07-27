@@ -24,9 +24,13 @@ def entry_point():
                     help='which browser to open on launch', choices=['chrome', 'brave'])
     ap.add_argument('-r', '--restart-browser',
                     help='if this flag is not passed, a new instance of the browser will'
-                    'be opened. this flag is most helpful when solving Googles ReCaptchas'
-                    'because if you restat your main profile you\'ll most likely be logged'
-                    'into Google and will be given an easier time on the captchas', default=False, action='store_true')
+                    ' be opened. this flag is most helpful when solving Googles ReCaptchas'
+                    ' because if you restat your main profile you\'ll most likely be logged'
+                    ' into Google and will be given an easier time on the captchas', default=False, action='store_true')
+    ap.add_argument('-e', '--load-extension',
+                    help='loads unpacked extensions when starting the browser,'
+                    ' to load multiple extensions sepparate the paths with commas'
+                    ' (must be used with -b/--browser)', default=None)
     ap.add_argument('-v', '--verbose',
                     help='show more logging', default=False, action='store_true')
     args = ap.parse_args()
@@ -34,6 +38,9 @@ def entry_point():
     if args.verbose:
         log = logging.getLogger('harvester')
         log.setLevel(logging.INFO)
+
+    if args.load_extension and not args.browser:
+        ap.error('cannot use -e/--load-extension without -b/--browser')
 
     print(f'server running on https://{args.host}:{args.port}')
 
@@ -44,6 +51,6 @@ def entry_point():
 
     if args.browser:
         browser.launch(args.domain, httpd.server_address,
-                       browser=browser.BrowserEnum(args.browser), restart=args.restart_browser)
+                       browser=browser.BrowserEnum(args.browser), restart=args.restart_browser, extensions=args.load_extension)
 
     server.serve(httpd)

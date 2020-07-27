@@ -52,7 +52,7 @@ command line options or you already have one running from a previous session.
 ```text
 > harvester -h
 usage: harvester.py [-h] -k SITE_KEY -d DOMAIN [-H HOST] [-p PORT]
-                    [-b {chrome,brave}] [-r] [-v]
+                    [-b {chrome,brave}] [-r] [-e LOAD_EXTENSION] [-v]
                     {recaptcha-v2,recaptcha-v3,hcaptcha}
 
 CaptchaHarvester: Solve captchas yourself without having to pay for services
@@ -74,14 +74,24 @@ optional arguments:
                         which browser to open on launch
   -r, --restart-browser
                         if this flag is not passed, a new instance of the
-                        browser willbe opened. this flag is most helpful when
-                        solving Googles ReCaptchasbecause if you restat your
-                        main profile you'll most likely be loggedinto Google
+                        browser will be opened. this flag is most helpful when
+                        solving Googles ReCaptchas because if you restat your
+                        main profile you'll most likely be logged into Google
                         and will be given an easier time on the captchas
+  -e LOAD_EXTENSION, --load-extension LOAD_EXTENSION
+                        loads unpacked extensions when starting the browser,
+                        to load multiple extensions sepparate the paths with
+                        commas (must be used with -b/--browser)
   -v, --verbose         show more logging
 
 For help contact @MacHacker#7322 (Discord)
 ```
+
+## Solveing V2 Captchas with [Buster](https://github.com/dessant/buster)
+
+You might find it useful to use [Buster](https://github.com/dessant/buster) when solving V2 Captchas.
+You can clone and build the extension for chrome, and then pass the path of the built extension
+to harvester with the `-e/--load-extension` flag.
 
 ## ReCaptcha: V2 vs. V3
 
