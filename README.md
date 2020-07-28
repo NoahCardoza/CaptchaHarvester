@@ -51,8 +51,9 @@ command line options or you already have one running from a previous session.
 
 ```text
 > harvester -h
-usage: harvester.py [-h] -k SITE_KEY -d DOMAIN [-H HOST] [-p PORT]
-                    [-b {chrome,brave}] [-r] [-e LOAD_EXTENSION] [-v]
+usage: harvester.py [-h] [-a DATA_ACTION] -k SITE_KEY -d DOMAIN [-H HOST]
+                    [-p PORT] [-b {chrome,brave}] [-r] [-e LOAD_EXTENSION]
+                    [-v]
                     {recaptcha-v2,recaptcha-v3,hcaptcha}
 
 CaptchaHarvester: Solve captchas yourself without having to pay for services
@@ -64,6 +65,9 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
+  -a DATA_ACTION, --data-action DATA_ACTION
+                        sets the action in rendered recaptcha-v3 when
+                        collecting tokens (required with recaptcha-v3)
   -k SITE_KEY, --site-key SITE_KEY
                         the sitekey used by the captcha on page
   -d DOMAIN, --domain DOMAIN
@@ -98,7 +102,12 @@ to harvester with the `-e/--load-extension` flag.
 When solving Google's v3 captchas, you should login to a Google Account first. The v3 captcha's
 work of a raiting system of your browsing habits. They are a little finicky compared to their v2
 predecessors. If the tokens stop working, you should start using a different Google Account or
-wait a little bit between relaoding the captcha harvester page.
+wait a little bit between reloading the captcha harvester page.
+
+Additonally, V3 ReCaptcha's require an action when submitting the captcha. Sometimes they don't
+matter if the target site dosen't double check them and you can get away passing anything to (-a/--data-action).
+However, it is advised that you grab the correct `data-action` attribute when looking for the sitekey, they
+should be near each other.
 
 ## accessing the tokens
 

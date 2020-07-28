@@ -11,6 +11,9 @@ def entry_point():
         epilog='For help contact @MacHacker#7322 (Discord)')
     ap.add_argument('type', choices=['recaptcha-v2', 'recaptcha-v3', 'hcaptcha'],
                     help='the type of captcha you are want to solve')
+    ap.add_argument('-a', '--data-action',
+                    help='sets the action in rendered recaptcha-v3 when'
+                    ' collecting tokens (required with recaptcha-v3)', default=None)
     ap.add_argument('-k', '--site-key', required=True,
                     help='the sitekey used by the captcha on page')
     ap.add_argument('-d', '--domain', required=True,
@@ -42,12 +45,15 @@ def entry_point():
     if args.load_extension and not args.browser:
         ap.error('cannot use -e/--load-extension without -b/--browser')
 
+    if args.type == 'recaptcha-v3' and not args.data_action:
+        ap.error('recaptcha-v3 requires the -a/--data_action parameter')
+
     print(f'server running on https://{args.host}:{args.port}')
 
     server_address = (args.host, args.port)
 
     httpd = server.setup(server_address, args.domain,
-                         server.CaptchaKindEnum(args.type), args.site_key)
+                         server.CaptchaKindEnum(args.type), args.site_key, data_action=args.data_action)
 
     if args.browser:
         browser.launch(args.domain, httpd.server_address,

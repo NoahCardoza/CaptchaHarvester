@@ -30,6 +30,7 @@ class CaptchaKindEnum(Enum):
 class MITMRecord:
     kind: CaptchaKindEnum
     sitekey: str
+    data_action: str
 
 
 __dir__ = path.dirname(path.abspath(__file__))
@@ -89,10 +90,14 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
                 if token:
                     tokens.put(token)
             self._simple_headers(200, 'text/html; charset=utf-8')
-            self._render_template(self.config.kind.value + '.html',
-                                  domain=self.path,
-                                  sitekey=self.config.sitekey,
-                                  server=f"https://{host}:{port}")
+
+            kwargs = dict(domain=self.path, sitekey=self.config.sitekey,
+                          server=f"https://{host}:{port}")
+
+            if self.config.kind == CaptchaKindEnum.RECAPTCHA_V3:
+                kwargs['action'] = self.config.data_action
+
+            self._render_template(self.config.kind.value + '.html', **kwargs)
         elif self.path.endswith('.pac'):
             domain = self.path[1:-4]
             self._simple_headers(200, 'text/plain; charset=utf-8')
@@ -126,8 +131,8 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         })
 
 
-def setup(server_address: Tuple[str, int], domain: str, captcha_kind: CaptchaKindEnum, sitekey: str) -> ThreadingHTTPServer:
-    MITM_CAHCE[domain] = MITMRecord(captcha_kind, sitekey)
+def setup(server_address: Tuple[str, int], domain: str, captcha_kind: CaptchaKindEnum, sitekey: str, data_action: str = None) -> ThreadingHTTPServer:
+    MITM_CAHCE[domain] = MITMRecord(captcha_kind, sitekey, data_action)
     httpd = ThreadingHTTPServer(server_address, ProxyHTTPRequestHandler)
     httpd.domain = domain
     httpd.socket = ssl.wrap_socket(httpd.socket,
