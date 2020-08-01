@@ -8,6 +8,11 @@ This project allows you to solve Google's V2 and V3 ReCaptchas as well as
 hCaptchas. However, since Google's V3 ReCaptchas are based on a rating
 system of your browser and browsing habits, it's slightly less reliable.
 
+### [CloudProxy](https://github.com/NoahCardoza/CloudProxy)
+
+This project is also natively supported by a newer project of mine which allows you to bypass
+Cloudflare's Bot Detection. It's super simlpe to setup, just follow the instructions [here](https://github.com/NoahCardoza/CloudProxy#harvester).
+
 ## help
 
 If you need help or want to ask questions: checkout the harvester's dedicated [discord server](https://discord.gg/AAQrkhR).
