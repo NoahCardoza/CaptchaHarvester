@@ -114,7 +114,7 @@ matter if the target site dosen't double check them and you can get away passing
 However, it is advised that you grab the correct `data-action` attribute when looking for the sitekey, they
 should be near each other.
 
-## accessing the tokens
+## Accessing The Tokens
 
 You can either access the tokens from another python project/process by using the
 handy `fetch.token` function I included:
@@ -140,7 +140,21 @@ HTTP error code 418 "I'm a teapot."
 because the server isn't really who it claims to be. Make sure you configure your
 program to ignore these errors.
 
-## credits
+## PyArmor/PyInstaller
+
+If you are using this project with PyArmor and or PyInstaller then fear not, it has
+already been configured to work seamlessly when packages into an `.exe` file. All you
+have to do is add the following to your `.spec` file's `Anaysis` call.
+
+```py
+Anaysis(datas = [("server.crt", r"harvester\server"),
+  ("server.key", r"harvester\server"),
+  ("hcaptcha.html", r"harvester\server\templates"),
+  ("recaptcha-v2.html", r"harvester\server\templates"),
+  ("recaptcha-v3.html", r"harvester\server\templates")])
+```
+
+## Credits
 
 Inspred by [Cosmo3904/Recaptcha-Harvester-V2](https://github.com/Cosmo3904/Recaptcha-Harvester-V2).
 

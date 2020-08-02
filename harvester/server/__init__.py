@@ -33,7 +33,9 @@ class MITMRecord:
     data_action: str
 
 
-__dir__ = path.dirname(path.abspath(__file__))
+# support for pyarmor/pyinstaller
+__dir__ = path.join(sys._MEIPASS, 'harvester', 'server') if getattr(
+    sys, '_MEIPASS') else path.abspath(path.dirname(__file__))
 MITM_CAHCE: Dict[str, MITMRecord] = {}
 tokens: 'ExpiringQueue[str]' = ExpiringQueue(110)
 
@@ -131,13 +133,15 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         })
 
 
-def setup(server_address: Tuple[str, int], domain: str, captcha_kind: CaptchaKindEnum, sitekey: str, data_action: str = None) -> ThreadingHTTPServer:
+def setup(server_address: Tuple[str, int], domain: str, captcha_kind: CaptchaKindEnum, sitekey: str,
+          data_action: str = None, keyfile: str = None, certfile: str = None) -> ThreadingHTTPServer:
     MITM_CAHCE[domain] = MITMRecord(captcha_kind, sitekey, data_action)
     httpd = ThreadingHTTPServer(server_address, ProxyHTTPRequestHandler)
     httpd.domain = domain
     httpd.socket = ssl.wrap_socket(httpd.socket,
-                                   keyfile=path.join(__dir__, 'server.key'),
-                                   certfile=path.join(__dir__, 'server.crt'), server_side=True)
+                                   keyfile=keyfile or path.join(
+                                       __dir__, 'server.key'),
+                                   certfile=certfile or path.join(__dir__, 'server.crt'), server_side=True)
     return httpd
 
 
@@ -150,6 +154,8 @@ def serve(httpd: ThreadingHTTPServer):
         httpd.shutdown()
 
 
-def start(server_address: Tuple[str, int], domain: str, captcha_kind: CaptchaKindEnum, sitekey: str):
-    httpd = setup(server_address, domain, captcha_kind, sitekey)
+def start(server_address: Tuple[str, int], domain: str, captcha_kind: CaptchaKindEnum, sitekey: str,
+          keyfile: str = None, certfile: str = None):
+    httpd = setup(server_address, domain, captcha_kind, sitekey, keyfile,
+                  certfile)
     serve(httpd)
