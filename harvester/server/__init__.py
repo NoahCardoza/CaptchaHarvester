@@ -34,7 +34,7 @@ class MITMRecord:
 
 
 # support for pyarmor/pyinstaller
-__dir__ = path.join(sys._MEIPASS, 'harvester', 'server') if getattr(
+__dir__ = path.join(getattr(sys, '_MEIPASS'), 'harvester', 'server') if getattr(
     sys, '_MEIPASS', None) else path.abspath(path.dirname(__file__))
 MITM_CAHCE: Dict[str, MITMRecord] = {}
 tokens: 'ExpiringQueue[str]' = ExpiringQueue(110)
