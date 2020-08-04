@@ -1,5 +1,7 @@
 import argparse
 import logging
+from threading import Thread
+import sys
 from . import server, browser
 from .server import CaptchaKindEnum, tokens
 from .browser import BrowserEnum
@@ -24,7 +26,7 @@ def entry_point():
                     default=5000, type=int)
 
     ap.add_argument('-b', '--browser',
-                    help='which browser to open on launch', choices=['chrome', 'brave'])
+                    help='which browser to open on launch')
     ap.add_argument('-r', '--restart-browser',
                     help='if this flag is not passed, a new instance of the browser will'
                     ' be opened. this flag is most helpful when solving Googles ReCaptchas'
@@ -55,8 +57,27 @@ def entry_point():
     httpd = server.setup(server_address, args.domain,
                          server.CaptchaKindEnum(args.type), args.site_key, data_action=args.data_action)
 
-    if args.browser:
-        browser.launch(args.domain, httpd.server_address,
-                       browser=browser.BrowserEnum(args.browser), restart=args.restart_browser, extensions=args.load_extension)
+    server_thread = Thread(target=server.serve, daemon=True, args=(httpd,))
+    server_thread.start()
 
-    server.serve(httpd)
+    try:
+        if args.browser:
+            browser_thread = browser.launch(args.domain, httpd.server_address,
+                                            browser=args.browser, restart=args.restart_browser,
+                                            extensions=args.load_extension, verbose=args.verbose)
+            if sys.platform[:3] == 'win':
+                # since I don't know how to locate the binary on windows
+                # we can't join the thread because we are starting the browser
+                # with start which doens't connect to the proccess
+                from time import sleep
+                try:
+                    while 1:
+                        sleep(1000)
+                except KeyboardInterrupt:
+                    pass
+            else:
+                browser_thread.join()
+        else:
+            server_thread.join()
+    except KeyboardInterrupt:
+        pass
