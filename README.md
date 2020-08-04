@@ -2,7 +2,11 @@
 
 > Solve captchas yourself without having to pay for services like 2captcha for use in automated projects.
 
-## use cases
+## Discord
+
+If you need help feel free to swing by my [Discord](https://discord.gg/AAQrkhR)!
+
+## Use Cases
 
 This project allows you to solve Google's V2 and V3 ReCaptchas as well as
 hCaptchas. However, since Google's V3 ReCaptchas are based on a rating
@@ -13,11 +17,7 @@ system of your browser and browsing habits, it's slightly less reliable.
 This project is also natively supported by a newer project of mine which allows you to bypass
 Cloudflare's Bot Detection. It's super simlpe to setup, just follow the instructions [here](https://github.com/NoahCardoza/CloudProxy#harvester).
 
-## help
-
-If you need help or want to ask questions: checkout the harvester's dedicated [discord server](https://discord.gg/AAQrkhR).
-
-## setup
+## Setup
 
 ### PyPi
 
@@ -25,7 +25,7 @@ If you need help or want to ask questions: checkout the harvester's dedicated [d
 pip install captcha-harvester
 ```
 
-### the `dev` branch
+### The `dev` Branch
 
 Sometimes there will be updates I'm working on that won't be pushed to the master branch/PyPi
 because I haven't had time to test them. Sometimes these patches will fix problems you experience
@@ -35,7 +35,7 @@ in the stable branch, but if things get buggy don't be surprised.
 pip install https://github.com/NoahCardoza/CaptchaHarvester/archive/dev.zip
 ```
 
-## usage
+## Usage
 
 ## > harvester
 
