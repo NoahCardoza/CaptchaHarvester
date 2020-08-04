@@ -57,8 +57,7 @@ command line options or you already have one running from a previous session.
 ```text
 > harvester -h
 usage: harvester.py [-h] [-a DATA_ACTION] -k SITE_KEY -d DOMAIN [-H HOST]
-                    [-p PORT] [-b {chrome,brave}] [-r] [-e LOAD_EXTENSION]
-                    [-v]
+                    [-p PORT] [-b BROWSER] [-r] [-e LOAD_EXTENSION] [-v]
                     {recaptcha-v2,recaptcha-v3,hcaptcha}
 
 CaptchaHarvester: Solve captchas yourself without having to pay for services
@@ -66,35 +65,71 @@ like 2captcha for use in automated projects.
 
 positional arguments:
   {recaptcha-v2,recaptcha-v3,hcaptcha}
-                        the type of captcha you are want to solve
+                        The type of captcha that that that domain/sitekey pair
+                        is for.
 
 optional arguments:
   -h, --help            show this help message and exit
   -a DATA_ACTION, --data-action DATA_ACTION
-                        sets the action in rendered recaptcha-v3 when
+                        Sets the action in rendered recaptcha-v3 when
                         collecting tokens (required with recaptcha-v3)
   -k SITE_KEY, --site-key SITE_KEY
-                        the sitekey used by the captcha on page
+                        The sitekey used by the captcha.
   -d DOMAIN, --domain DOMAIN
-                        the domain for which you want to solve captchas
-  -H HOST, --host HOST  defaults to 127.0.0.1
-  -p PORT, --port PORT  defaults to 5000
-  -b {chrome,brave}, --browser {chrome,brave}
-                        which browser to open on launch
+                        The domain of the site which hosts the captcha you
+                        want to solve.
+  -H HOST, --host HOST  Defaults to 127.0.0.1.
+  -p PORT, --port PORT  Defaults to 5000.
+  -b BROWSER, --browser BROWSER
+                        Which browser to open on launch. Quick options are
+                        chrome/brave, but you can also pass the path to any
+                        Chromium browser.
   -r, --restart-browser
-                        if this flag is not passed, a new instance of the
+                        If this flag is not passed, a new instance of the
                         browser will be opened. this flag is most helpful when
                         solving Googles ReCaptchas because if you restat your
                         main profile you'll most likely be logged into Google
-                        and will be given an easier time on the captchas
+                        and will be given an easier time on the captchas.
   -e LOAD_EXTENSION, --load-extension LOAD_EXTENSION
-                        loads unpacked extensions when starting the browser,
+                        Loads unpacked extensions when starting the browser,
                         to load multiple extensions sepparate the paths with
-                        commas (must be used with -b/--browser)
-  -v, --verbose         show more logging
-
-For help contact @MacHacker#7322 (Discord)
+                        commas (must be used with -b/--browser).
+  -v, --verbose         Show more server and browser (when using -b/--browser)
+                        logging.
 ```
+
+## Configuring The Browser
+
+When accessing the server to collect the tokens you have to do it the right way and you can't connect to it
+just like any old server. You configure your browser to think that the server is actually the site we want
+to collect captcha tokens for
+
+### How do we do this the EASY way?
+
+Luckily, the easy way is pretty easy. Just use the `-b/--browser` flag. Currently you can pass it either
+`chrome` or `brave` for which the `harvester` is preconfigured to find and launch on macOS and Windows (Linux
+support coming soon). Additionally, you can pass the path to a **Chromium** browser binary/`.exe` or a browser
+that can be found in your $PATH envrionment variable.
+
+When using the `-b`, a browser instance will be lanuched that's totally disconnected from your main Profile
+(unless you pass `-r`, which *MIGHT* be buggy on Windows).
+
+**NOTE**: The way the harvester is currently setup, if you use the `-b` flag to start up the browser, then when you quit either the browser or the server, the other will also terminate.
+
+### How do we do this the HARD way?
+
+Mainly through the use on the `--host-rules` Chromium flag. Here's an example:
+
+```bash
+--host-rules="MAP example.com 127.0.0.1:5000"
+```
+
+Basically this sets the DNS record for `example.com` to `127.0.0.1:5000` rather than querying a DNS server
+for the actual IP of the real site. This helps us trick the captcha provider into thinking that the captcha
+is actually being loaded on their client's.
+
+There are a few other arguments the harvester uses to make things easier and simpler which can be found in
+[/harvester/browser.py](https://github.com/NoahCardoza/CaptchaHarvester/blob/master/harvester/browser.py).
 
 ## Solveing V2 Captchas with [Buster](https://github.com/dessant/buster)
 
@@ -114,31 +149,44 @@ matter if the target site dosen't double check them and you can get away passing
 However, it is advised that you grab the correct `data-action` attribute when looking for the sitekey, they
 should be near each other.
 
-## Accessing The Tokens
+## How do I use the tokens of the captcha's I solve?
 
-You can either access the tokens from another python project/process by using the
-handy `fetch.token` function I included:
+### API
+
+In most cases you'll probably want to use the API to fetch the tokens.
+
+#### Python
+
+If you want to access the tokens with a Python script, you are in luck! I've included a handy
+wrapper for the API which makes things really simple. Just take a look at this example:
 
 ```python
 from harvester import fetch
 
 server_address = ('127.0.0.1', 5000)
 token = fetch.token(server_address)
-print('token:', token)
+print('Token:', token)
 ```
 
-**Alternativly**:
+#### Any Other Lanuage (via HTTP API)
+
+If your lanuage of choice isn't Python, then you can grab tokens by making calls to the API endpoints
+that the harvester's server has avalible.
+
+Route | Type | Description
+| :--- | :--- | :--- |
+ `/token` | String | This is your most useful endpoint. When called it will pop a token from the queue and return it in plain text. If no tokens are available it will return a [418 status code](https://httpstatuses.com/418).
+ `/tokens` | List\[String\] | This will return a list of all the avalible tokens in the queue. It is recomended that you never use any tokens you see in this list because then `/token` may return an already used token.
+
+**NOTE**: If you are making requests from another program, you'll get SSL errors
+because the server isn't really who it claims to be. Make sure you configure your
+program to ignore these errors.
+
+### Programtically
+
 You can check out [example.py](example.py) to see how to progamatically
 start the server and access the tokens by integrating the harvester with
 your existsing (or new) code.
-
-Additionally, if your other project isn't using Python, you can call `/token` which
-will return one token and remove it from the Queue. If no tokens exists it will return
-HTTP error code 418 "I'm a teapot."
-
-**NOTE**: if you are making requests from another program, you'll get SSL errors
-because the server isn't really who it claims to be. Make sure you configure your
-program to ignore these errors.
 
 ## PyArmor/PyInstaller
 
@@ -163,3 +211,5 @@ For help contact @`MacHacker#7322` (Discord)
 Has CaptchaHarvester saved you money on your project? Consider buying me a coffee!
 
 [![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/noahcardoza)
+
+Made with  ♥️  by [@NoahCardoza](https://github.com/NoahCardoza)
