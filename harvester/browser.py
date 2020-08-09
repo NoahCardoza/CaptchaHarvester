@@ -10,9 +10,11 @@ from threading import Thread
 from functools import partial
 
 log = logging.getLogger('harvester')
+
+# TODO: simplify since we are only supporting chrome now
+
 browsers = {
     'chrome': 'Google Chrome',
-    'brave': 'Brave Browser'
 }
 
 restart_commands = {
@@ -23,7 +25,6 @@ restart_commands = {
 
 class BrowserEnum(Enum):
     CHROME = 'chrome'
-    BRAVE = 'brave'
 
 
 def read_osx_defults(plist: str, binary: str) -> str:
@@ -31,7 +32,7 @@ def read_osx_defults(plist: str, binary: str) -> str:
     Looks for the preferences files that indicate from which location
     the specified browser was launched last.
     """
-    import plistlib
+    import plistlib  # pylint: disable=import-error
     plist_file = f'{os.environ["HOME"]}/Library/Preferences/{plist}.plist'
     if os.path.exists(plist_file):
         binary_path = plistlib.readPlist(
@@ -44,7 +45,8 @@ def read_windows_registry(browser: str) -> str:
     """
     Reads the Windows registry to find the paths to the specified browser.
     """
-    import winreg as reg
+
+    import winreg as reg  # pylint: disable=import-error
     reg_path = f'SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\{browser}.exe'
     exe_path = None
     for install_type in reg.HKEY_CURRENT_USER, reg.HKEY_LOCAL_MACHINE:
@@ -54,7 +56,7 @@ def read_windows_registry(browser: str) -> str:
             reg_key.Close()
             if not os.path.isfile(exe_path):
                 continue
-        except WindowsError:
+        except WindowsError:  # pylint:disable=undefined-variable
             pass
         else:
             break
@@ -64,11 +66,9 @@ def read_windows_registry(browser: str) -> str:
 registry = {
     'Darwin': {
         'chrome': partial(read_osx_defults, 'com.google.Chrome', 'Google Chrome'),
-        'brave': partial(read_osx_defults, 'com.brave.Browser', 'Brave Browser')
     },
     'Windows': {
         'chrome': partial(read_windows_registry, 'chrome'),
-        'brave': partial(read_windows_registry, 'brave')
     }
 }
 
@@ -139,14 +139,12 @@ def launch(domain: str, server_address: Tuple[str, int], browser: Union[BrowserE
 
     browser_command.extend(browser_args)
     browser_command.extend((
-        '--ignore-certificate-errors',
-        '--ignore-urlfetcher-cert-requests',
         '--no-default-browser-check',
         '--no-check-default-browser',
         '--no-first-run',
         f'--host-rules=MAP {domain} {server_address[0]}:{server_address[1]}',
         f"--window-size={width},{height}",
-        f'--app=https://{domain}'
+        f'--app=http://{domain}'
     ))
 
     thread = Thread(target=subprocess.run, args=(

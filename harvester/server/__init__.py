@@ -10,7 +10,6 @@ from dataclasses import dataclass
 from typing import Dict, Union, Tuple
 import logging
 import sys
-import ssl
 
 log = logging.getLogger('harvester')
 sh = logging.StreamHandler(sys.stdout)
@@ -94,7 +93,7 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
             self._simple_headers(200, 'text/html; charset=utf-8')
 
             kwargs = dict(domain=self.path, sitekey=self.config.sitekey,
-                          server=f"https://{host}:{port}")
+                          server=f"http://{host}:{port}")
 
             if self.config.kind == CaptchaKindEnum.RECAPTCHA_V3:
                 kwargs['action'] = self.config.data_action
@@ -138,10 +137,6 @@ def setup(server_address: Tuple[str, int], domain: str, captcha_kind: CaptchaKin
     MITM_CAHCE[domain] = MITMRecord(captcha_kind, sitekey, data_action)
     httpd = ThreadingHTTPServer(server_address, ProxyHTTPRequestHandler)
     httpd.domain = domain
-    httpd.socket = ssl.wrap_socket(httpd.socket,
-                                   keyfile=keyfile or path.join(
-                                       __dir__, 'server.key'),
-                                   certfile=certfile or path.join(__dir__, 'server.crt'), server_side=True)
     return httpd
 
 

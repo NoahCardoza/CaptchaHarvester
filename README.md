@@ -57,7 +57,7 @@ command line options or you already have one running from a previous session.
 ```text
 > harvester -h
 usage: harvester.py [-h] [-a DATA_ACTION] -k SITE_KEY -d DOMAIN [-H HOST]
-                    [-p PORT] [-b BROWSER] [-r] [-e LOAD_EXTENSION] [-v]
+                    [-p PORT] [-b BROWSER] [-B] [-r] [-e LOAD_EXTENSION] [-v]
                     {recaptcha-v2,recaptcha-v3,hcaptcha}
 
 CaptchaHarvester: Solve captchas yourself without having to pay for services
@@ -81,9 +81,9 @@ optional arguments:
   -H HOST, --host HOST  Defaults to 127.0.0.1.
   -p PORT, --port PORT  Defaults to 5000.
   -b BROWSER, --browser BROWSER
-                        Which browser to open on launch. Quick options are
-                        chrome/brave, but you can also pass the path to any
-                        Chromium browser.
+                        Allows you to pass the path to any Chromium browser.
+  -B, --no-browser      Keeps the harvester from launching a browser br
+                        default.
   -r, --restart-browser
                         If this flag is not passed, a new instance of the
                         browser will be opened. this flag is most helpful when
@@ -96,6 +96,8 @@ optional arguments:
                         commas (must be used with -b/--browser).
   -v, --verbose         Show more server and browser (when using -b/--browser)
                         logging.
+
+For help contact @MacHacker#7322 (Discord)
 ```
 
 ## Configuring The Browser
@@ -106,10 +108,9 @@ to collect captcha tokens for
 
 ### How do we do this the EASY way?
 
-Luckily, the easy way is pretty easy. Just use the `-b/--browser` flag. Currently you can pass it either
-`chrome` or `brave` for which the `harvester` is preconfigured to find and launch on macOS and Windows (Linux
+Luckily, the easy way is pretty easy. You literally have to do nothing! However, this only works on Mac/Windows (Linux
 support coming soon). Additionally, you can pass the path to a **Chromium** browser binary/`.exe` or a browser
-that can be found in your $PATH envrionment variable.
+that can be found in your $PATH envrionment variable through the `-b/--browser`.
 
 When using the `-b`, a browser instance will be lanuched that's totally disconnected from your main Profile
 (unless you pass `-r`, which *MIGHT* be buggy on Windows).
@@ -130,6 +131,9 @@ is actually being loaded on their client's.
 
 There are a few other arguments the harvester uses to make things easier and simpler which can be found in
 [/harvester/browser.py](https://github.com/NoahCardoza/CaptchaHarvester/blob/master/harvester/browser.py).
+
+If for some reason you don't want a browser launched on the start of the harvester or you want to configure it
+youself, all you have to do is pass the `-b/--no-browser` flag.
 
 ## Solveing V2 Captchas with [Buster](https://github.com/dessant/buster)
 
@@ -177,10 +181,6 @@ Route | Type | Description
 | :--- | :--- | :--- |
  `/token` | String | This is your most useful endpoint. When called it will pop a token from the queue and return it in plain text. If no tokens are available it will return a [418 status code](https://httpstatuses.com/418).
  `/tokens` | List\[String\] | This will return a list of all the avalible tokens in the queue. It is recomended that you never use any tokens you see in this list because then `/token` may return an already used token.
-
-**NOTE**: If you are making requests from another program, you'll get SSL errors
-because the server isn't really who it claims to be. Make sure you configure your
-program to ignore these errors.
 
 ### Programtically
 

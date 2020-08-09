@@ -5,11 +5,10 @@ from typing import Tuple
 
 
 def token(server_address: Tuple[str, int], timeout=3) -> str:
-    url = f'https://{server_address[0]}:{server_address[1]}/token'
-    context = ssl.SSLContext()
+    url = f'http://{server_address[0]}:{server_address[1]}/token'
     while 1:
         try:
-            return urlopen(url, context=context).read().decode('ascii')
+            return urlopen(url).read().decode('ascii')
         except HTTPError:
             sleep(timeout)
 
