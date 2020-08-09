@@ -99,13 +99,6 @@ class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
                 kwargs['action'] = self.config.data_action
 
             self._render_template(self.config.kind.value + '.html', **kwargs)
-        elif self.path.endswith('.pac'):
-            domain = self.path[1:-4]
-            self._simple_headers(200, 'text/plain; charset=utf-8')
-            self._render_template('proxy.pac',
-                                  host=host,
-                                  port=port,
-                                  domain=domain)
         elif self.path.startswith('/tokens'):
             self._simple_headers(200, 'text/json; charset=utf-8')
             self.wfile.write(
