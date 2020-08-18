@@ -195,8 +195,7 @@ already been configured to work seamlessly when packages into an `.exe` file. Al
 have to do is add the following to your `.spec` file's `Anaysis` call.
 
 ```py
-Anaysis(datas = [("server.crt", r"harvester\server"),
-  ("server.key", r"harvester\server"),
+Anaysis(datas=[
   ("hcaptcha.html", r"harvester\server\templates"),
   ("recaptcha-v2.html", r"harvester\server\templates"),
   ("recaptcha-v3.html", r"harvester\server\templates")])
@@ -212,4 +211,4 @@ Has CaptchaHarvester saved you money on your project? Consider buying me a coffe
 
 [![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/noahcardoza)
 
-Made with  ♥️  by [@NoahCardoza](https://github.com/NoahCardoza)
+Made with ❤️ by [@NoahCardoza](https://github.com/NoahCardoza)
