@@ -183,7 +183,7 @@ class Harvester(object):
     def get_token_queue(self, domain):
         return self.domain_cache[domain].tokens
 
-    def _intercept(self, domain: str, sitekey: str, captcha_kind: CaptchaKindEnum, data_action: str = None):
+    def _intercept(self, domain: str, sitekey: str, captcha_kind: CaptchaKindEnum, action: str = None):
         if not domain_pattern.match(domain):
             raise DomainInvalidException(
                 'You must only give a domain, not a whole URL.')
@@ -193,9 +193,10 @@ class Harvester(object):
     def intercept_recaptch_v2(self, domain: str, sitekey: str):
         self._intercept(domain, sitekey, CaptchaKindEnum.RECAPTCHA_V2, None)
 
-    def intercept_recaptch_v3(self, domain: str, sitekey: str, data_action: str = None):
+    def intercept_recaptch_v3(self, domain: str, sitekey: str, action: str = None):
         self._intercept(domain, sitekey,
-                        CaptchaKindEnum.RECAPTCHA_V3, data_action)
+                        CaptchaKindEnum.RECAPTCHA_V3, action)
 
     def intercept_hcaptcha(self, domain: str, sitekey: str):
         self._intercept(domain, sitekey, CaptchaKindEnum.HCAPTCHA, None)
+        return self.get_token_queue(domain)
