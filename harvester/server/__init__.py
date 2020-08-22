@@ -12,6 +12,15 @@ import logging
 import sys
 import shutil
 import harvester.browser as browserModule
+import re
+
+domain_pattern = re.compile(
+    r'^(?:[a-zA-Z0-9]'  # First character of the domain
+    r'(?:[a-zA-Z0-9-_]{0,61}[A-Za-z0-9])?\.)'  # Sub domain + hostname
+    r'+[A-Za-z0-9][A-Za-z0-9-_]{0,61}'  # First 61 characters of the gTLD
+    r'[A-Za-z]$'  # Last character of the gTLD
+)
+
 
 log = logging.getLogger('harvester')
 sh = logging.StreamHandler(sys.stdout)
@@ -19,6 +28,10 @@ formatter = logging.Formatter(
     '%(name)s(%(levelname)s) [%(timestamp)s] [%(address)s] %(message)s')
 sh.setFormatter(formatter)
 log.addHandler(sh)
+
+
+class DomainInvalidException(Exception):
+    pass
 
 
 class CaptchaKindEnum(Enum):
@@ -171,6 +184,9 @@ class Harvester(object):
         return self.domain_cache[domain].tokens
 
     def _intercept(self, domain: str, sitekey: str, captcha_kind: CaptchaKindEnum, data_action: str = None):
+        if not domain_pattern.match(domain):
+            raise DomainInvalidException(
+                'You must only give a domain, not a whole URL.')
         self.domain_cache[domain] = MITMRecord(
             captcha_kind, sitekey, data_action)
 
