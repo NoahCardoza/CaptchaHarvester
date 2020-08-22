@@ -148,10 +148,10 @@ def ProxyHTTPRequestHandlerWrapper(domain_cache: Dict[str, MITMRecord] = {}):
 
 
 class Harvester(object):
-    def __init__(self, hostname='127.0.0.1', port=5000):
+    def __init__(self, host='127.0.0.1', port=5000):
         self.domain_cache: Dict[str, MITMRecord] = {}
         self.httpd = ThreadingHTTPServer(
-            (hostname, port), ProxyHTTPRequestHandlerWrapper(self.domain_cache))
+            (host, port), ProxyHTTPRequestHandlerWrapper(self.domain_cache))
 
     def serve(self):
         try:
