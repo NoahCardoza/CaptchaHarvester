@@ -23,13 +23,6 @@ footer iframe {
   margin-bottom: -5px;
 }
 
-input {
-  width: 100%;
-  margin-top: 40px;
-  margin-bottom: 40px;
-  
-}
-
 .g-recaptcha, .h-captcha {
   display: inline-block;
   margin: 20px;

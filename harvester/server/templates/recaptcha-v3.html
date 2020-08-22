@@ -13,12 +13,22 @@
 <body>
     <section>
         <h3>ReCaptcha v3 Harvester</h3>
-        <form method='POST'>
-            <input type="text" id="g-recaptcha-response" name="g-recaptcha-response">
+        <form method='POST' class='mb-4'>
+            <input type='text' id='g-recaptcha-response' name='g-recaptcha-response' style='width: 100%;' class='mb-4'>
             <a class='btn btn-primary' href='{{ server }}/{{ domain }}/tokens' target='_blank'>Usable Tokens</a>
             <button disabled id='submit' type='submit' class='btn btn-primary'>Submit</button>
         </form>
+        <div class='input-group'>
+            <div class='input-group-prepend'>
+                <span class='input-group-text'>Auto Submit</span>
+                <span class='input-group-text'><input id='auto-submit-control' type='checkbox'></span>
+            </div>
+            <input disabled id='auto-submit-wait' type='text' class='form-control' value='5000'>
+        </div>
     </section>
+
+
+
     <footer>
         <div class='love'>
             Made with ❤️ &nbsp; by <a href='https://github.com/NoahCardoza/CaptchaHarvester'
@@ -29,14 +39,68 @@
 
     </footer>
     <script>
+        const autoSubmitControlEl = document.getElementById('auto-submit-control')
+        const autoSubmitWaitEl = document.getElementById('auto-submit-wait')
+        const submitBtnEl = document.getElementById('submit')
+        let timeoutId = null
+
+
+        if (localStorage.getItem('auto-submit-on')) {
+            autoSubmitControlEl.checked = true
+            autoSubmitWaitEl.disabled = false
+        }
+
+        const wait = localStorage.getItem('auto-submit-wait')
+        if (wait) {
+            autoSubmitWaitEl.value = wait
+        }
+
+        autoSubmitWaitEl.addEventListener('keyup', () => {
+            localStorage.setItem('auto-submit-wait', autoSubmitWaitEl.value)
+        })
+
+        autoSubmitControlEl.addEventListener('click', () => {
+            if (localStorage.getItem('auto-submit-on')) {
+                localStorage.removeItem('auto-submit-on')
+                autoSubmitWaitEl.disabled = true
+                if (timeoutId !== null) {
+                    clearTimeout(timeoutId)
+                    timeoutId = null
+                }
+            } else {
+                localStorage.setItem('auto-submit-on', 1)
+                autoSubmitWaitEl.disabled = false
+                console.log(submitBtnEl.disabled)
+                if (!submitBtnEl.disabled) {
+                    timeoutId = setTimeout(() => {
+                        submitBtnEl.click()
+                    }, Number(autoSubmitWaitEl.value))
+                }
+            }
+        })
+
         grecaptcha.ready(() => {
             grecaptcha.execute('{{ sitekey }}', { action: '{{ action }}' })
                 .then(token => {
                     document.getElementById('g-recaptcha-response').value = token;
-                    document.getElementById('submit').disabled = false
+                    submitBtnEl.disabled = false
+                    if (autoSubmitControlEl.checked) {
+                        timeoutId = setTimeout(() => {
+                            submitBtnEl.click()
+                        }, Number(autoSubmitWaitEl.value))
+                    }
                 });
         });
     </script>
+    <script src='https://code.jquery.com/jquery-3.5.1.slim.min.js'
+        integrity='sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj'
+        crossorigin='anonymous'></script>
+    <script src='https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js'
+        integrity='sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN'
+        crossorigin='anonymous'></script>
+    <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js'
+        integrity='sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV'
+        crossorigin='anonymous'></script>
 </body>
 
 </html>
