@@ -56,10 +56,7 @@ def entry_point():
 
     harvester = Harvester(args.host, args.port)
     harvester._intercept(args.domain, args.site_key, CaptchaKindEnum(
-        args.type), data_action=args.data_action)
-
-    harvester._intercept('test.com', args.site_key, CaptchaKindEnum(
-        args.type), data_action=args.data_action)
+        args.type), action=args.data_action)
 
     server_thread = Thread(target=harvester.serve, daemon=True)
     server_thread.start()
