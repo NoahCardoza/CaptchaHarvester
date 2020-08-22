@@ -1,3 +1,5 @@
+![CaptchaHarvester](logo.png)
+
 # CaptchaHarvester
 
 > Solve captchas yourself without having to pay for services like 2captcha for use in automated projects.
