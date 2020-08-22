@@ -2,8 +2,8 @@ import argparse
 import logging
 from threading import Thread
 import sys
-from . import server, browser
-from .server import CaptchaKindEnum, tokens
+from . import browser
+from .server import Harvester, CaptchaKindEnum
 from .browser import BrowserEnum
 
 
@@ -54,19 +54,20 @@ def entry_point():
 
     print(f'server running on http://{args.host}:{args.port}')
 
-    server_address = (args.host, args.port)
+    harvester = Harvester(args.host, args.port)
+    harvester._intercept(args.domain, args.site_key, CaptchaKindEnum(
+        args.type), data_action=args.data_action)
 
-    httpd = server.setup(server_address, args.domain,
-                         server.CaptchaKindEnum(args.type), args.site_key, data_action=args.data_action)
+    harvester._intercept('test.com', args.site_key, CaptchaKindEnum(
+        args.type), data_action=args.data_action)
 
-    server_thread = Thread(target=server.serve, daemon=True, args=(httpd,))
+    server_thread = Thread(target=harvester.serve, daemon=True)
     server_thread.start()
 
     try:
         if not args.no_browser:
-            browser_thread = browser.launch(args.domain, httpd.server_address,
-                                            browser=args.browser or BrowserEnum.CHROME, restart=args.restart_browser,
-                                            extensions=args.load_extension, verbose=args.verbose)
+            browser_thread = harvester.launch_browser(args.browser or BrowserEnum.CHROME, restart=args.restart_browser,
+                                                      extensions=args.load_extension, verbose=args.verbose)
             browser_thread.join()
         else:
             server_thread.join()

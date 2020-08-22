@@ -8,6 +8,7 @@ import logging
 import subprocess
 from threading import Thread
 from functools import partial
+from collections.abc import Iterable
 
 log = logging.getLogger('harvester')
 
@@ -84,9 +85,11 @@ def get_browser_binary_location(browser: str) -> str:
         return None
 
 
-def launch(domain: str, server_address: Tuple[str, int], browser: Union[BrowserEnum, str] = BrowserEnum.CHROME,
-           restart: bool = False, width: int = 400, height: int = 580, browser_path: str = None, browser_args: List[str] = [],
+def launch(domain: Union[str, List[str]], server_address: Tuple[str, int], browser: Union[BrowserEnum, str] = BrowserEnum.CHROME,
+           restart: bool = False, width: int = 400, height: int = 580, browser_args: List[str] = [],
            extensions: str = None, verbose: bool = False):
+    domain = domain if isinstance(domain, Iterable) else[domain]
+    server = f'{server_address[0]}:{server_address[1]}'
 
     if browser is not BrowserEnum:
         try:
@@ -137,15 +140,24 @@ def launch(domain: str, server_address: Tuple[str, int], browser: Union[BrowserE
     if extensions:
         browser_command.append(f'--load-extension={extensions}')
 
+    host_rules = []
+    for d in domain:
+        host_rules.append(
+            f'MAP {d} {server}')
+
     browser_command.extend(browser_args)
     browser_command.extend((
         '--no-default-browser-check',
         '--no-check-default-browser',
         '--no-first-run',
-        f'--host-rules=MAP {domain} {server_address[0]}:{server_address[1]}',
+        f'--host-rules={",".join(host_rules)}',
         f"--window-size={width},{height}",
-        f'--app=http://{domain}'
     ))
+
+    if len(domain) == 1:
+        browser_command.append(f'--app=http://{domain[0]}')
+    else:
+        browser_command.append(f'--app=http://{server}/domains')
 
     thread = Thread(target=subprocess.run, args=(
         browser_command,), kwargs={'capture_output': not verbose}, daemon=True)
