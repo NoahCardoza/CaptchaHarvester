@@ -94,6 +94,10 @@ def ProxyHTTPRequestHandlerWrapper(domain_cache: Dict[str, MITMRecord] = {}):
                 self._simple_headers(200, 'image/png')
                 shutil.copyfileobj(
                     open(path.join(__dir__, 'icon.png'), 'rb'), self.wfile)
+            elif self.path == '/style.css':
+                self._simple_headers(200, 'text/css')
+                shutil.copyfileobj(
+                    open(path.join(__dir__, 'style.css'), 'rb'), self.wfile)
             elif self.path == '/domains':
                 self._simple_headers(200, 'text/html')
                 body = ''

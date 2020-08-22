@@ -1,34 +1,42 @@
 <html>
-<meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
 
 <head>
-    <title>ReCaptcha Harvester</title>
+    <title>Harvester: {{ domain }}</title>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
+    <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'
+        integrity='sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z' crossorigin='anonymous'>
+    <link rel='stylesheet' href='/style.css'>
     <script type='text/javascript' src='https://www.google.com/recaptcha/api.js?render={{ sitekey }}'></script>
 </head>
 
 <body>
-    <center>
-        <h3>hCaptcha Token Harvester</h3>
-        <h5>HTML by: @NoahCardoza</h5>
-        <h5>Python by: @NoahCardoza</h5>
-        <form method="post">
+    <section>
+        <h3>ReCaptcha v3 Harvester</h3>
+        <form method='POST'>
             <input type="text" id="g-recaptcha-response" name="g-recaptcha-response">
-            <input type="submit" value="Submit" id="submit">
+            <a class='btn btn-primary' href='{{ server }}/{{ domain }}/tokens' target='_blank'>Usable Tokens</a>
+            <button disabled id='submit' type='submit' class='btn btn-primary'>Submit</button>
         </form>
-        <h5>
-            <a style="text-decoration: none;" href="{{ server }}/{{ domain }}/tokens" target="_blank">Usable Tokens</a>
-        </h5>
-    </center>
+    </section>
+    <footer>
+        <div class='love'>
+            Made with ❤️ &nbsp; by <a href='https://github.com/NoahCardoza/CaptchaHarvester'
+                target='_blank'>@NoahCardoza</a>
+        </div>
+        <iframe src='https://ghbtns.com/github-btn.html?user=NoahCardoza&repo=CaptchaHarvester&type=star&count=true'
+            frameborder='0' scrolling='0' width='90' height='20' title='GitHub'></iframe>
+
+    </footer>
     <script>
         grecaptcha.ready(function () {
-            console.log('ready')
             grecaptcha.execute('{{ sitekey }}', { action: '{{ action }}' })
                 .then(function (token) {
                     console.log(token)
                     document.getElementById('g-recaptcha-response').value = token;
+                    document.getElementById('submit').disabled = false
                 });
         });
-
     </script>
 </body>
 
