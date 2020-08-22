@@ -29,10 +29,9 @@
 
     </footer>
     <script>
-        grecaptcha.ready(function () {
+        grecaptcha.ready(() => {
             grecaptcha.execute('{{ sitekey }}', { action: '{{ action }}' })
-                .then(function (token) {
-                    console.log(token)
+                .then(token => {
                     document.getElementById('g-recaptcha-response').value = token;
                     document.getElementById('submit').disabled = false
                 });
