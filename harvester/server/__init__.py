@@ -100,10 +100,10 @@ def ProxyHTTPRequestHandlerWrapper(domain_cache: Dict[str, MITMRecord] = {}):
                     open(path.join(__dir__, 'style.css'), 'rb'), self.wfile)
             elif self.path == '/domains':
                 self._simple_headers(200, 'text/html')
-                body = ''
+                domain_list = ''
                 for domain in domain_cache.keys():
-                    body += f'<a href="http://{domain}">{domain}</a><br>'
-                self.wfile.write(body.encode('utf-8'))
+                    domain_list += f'<li class="list-group-item"><a href="http://{domain}">{domain}</a></li>'
+                self._render_template('domains.html', domain_list=domain_list)
             else:
                 self.handel_request('GET')
 

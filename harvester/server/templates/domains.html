@@ -1,0 +1,42 @@
+<html lang='en'>
+
+<head>
+    <title>Harvester: Domains</title>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
+    <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'
+        integrity='sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z' crossorigin='anonymous'>
+    <link rel='stylesheet' href='/style.css'>
+</head>
+
+<body>
+    <section>
+        <h3>Domains</h3>
+        <p>Because multiple intercepters were set, you've been sent here where you can open
+            new windows for each intercepter.
+        </p>
+        <ul class="list-group">
+            {{ domain_list }}
+        </ul>
+    </section>
+    <footer>
+        <div class='love'>
+            Made with ❤️ &nbsp; by <a href='https://github.com/NoahCardoza/CaptchaHarvester'
+                target='_blank'>@NoahCardoza</a>
+        </div>
+        <iframe src='https://ghbtns.com/github-btn.html?user=NoahCardoza&repo=CaptchaHarvester&type=star&count=true'
+            frameborder='0' scrolling='0' width='90' height='20' title='GitHub'></iframe>
+
+    </footer>
+    <script>
+        let windows = 0
+        document.querySelectorAll('li a').forEach(el => {
+            el.addEventListener('click', e => {
+                e.preventDefault()
+                window.open(el.href, windows++, 'newwindow', 'toolbar=no,location=no')
+            })
+        })
+    </script>
+</body>
+
+</html>
