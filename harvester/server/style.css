@@ -1,0 +1,29 @@
+section {
+  margin: auto;
+  width: 350px;
+  padding: 10px;
+  text-align: center;
+}
+
+footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  text-align: center;
+}
+
+footer div {
+  line-height: 18px;
+  display: inline-block
+}
+
+footer iframe {
+  display: inline-block;
+  margin-bottom: -5px;
+}
+
+.g-recaptcha, .h-captcha {
+  display: inline-block;
+  margin: 20px;
+}

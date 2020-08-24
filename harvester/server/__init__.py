@@ -94,12 +94,16 @@ def ProxyHTTPRequestHandlerWrapper(domain_cache: Dict[str, MITMRecord] = {}):
                 self._simple_headers(200, 'image/png')
                 shutil.copyfileobj(
                     open(path.join(__dir__, 'icon.png'), 'rb'), self.wfile)
+            elif self.path == '/style.css':
+                self._simple_headers(200, 'text/css')
+                shutil.copyfileobj(
+                    open(path.join(__dir__, 'style.css'), 'rb'), self.wfile)
             elif self.path == '/domains':
                 self._simple_headers(200, 'text/html')
-                body = ''
+                domain_list = ''
                 for domain in domain_cache.keys():
-                    body += f'<a href="http://{domain}">{domain}</a><br>'
-                self.wfile.write(body.encode('utf-8'))
+                    domain_list += f'<li class="list-group-item"><a href="http://{domain}">{domain}</a></li>'
+                self._render_template('domains.html', domain_list=domain_list)
             else:
                 self.handel_request('GET')
 

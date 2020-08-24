@@ -1,23 +1,23 @@
 <html lang='en'>
 
 <head>
-    <title>Harvester: {{ domain }}</title>
+    <title>Harvester: Domains</title>
     <meta charset='utf-8'>
     <meta name='viewport' content='width=device-width, initial-scale=1, shrink-to-fit=no'>
     <link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css'
         integrity='sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z' crossorigin='anonymous'>
     <link rel='stylesheet' href='/style.css'>
-    <script type='text/javascript' src='https://www.google.com/recaptcha/api.js' async defer></script>
 </head>
 
 <body>
     <section>
-        <h3>ReCaptcha v2 Harvester</h3>
-        <form method='POST'>
-            <div class='g-recaptcha' data-sitekey='{{ sitekey }}' data-callback='submit'></div>
-            <a class='btn btn-primary' href='{{ server }}/{{ domain }}/tokens' target='_blank'>Usable Tokens</a>
-            <button id='submit' type='submit' class='btn btn-primary'>Submit</button>
-        </form>
+        <h3>Domains</h3>
+        <p>Because multiple intercepters were set, you've been sent here where you can open
+            new windows for each intercepter.
+        </p>
+        <ul class="list-group">
+            {{ domain_list }}
+        </ul>
     </section>
     <footer>
         <div class='love'>
@@ -28,7 +28,15 @@
             frameborder='0' scrolling='0' width='90' height='20' title='GitHub'></iframe>
 
     </footer>
-    <script>function submit() { document.getElementById('submit').click(); }</script>
+    <script>
+        let windows = 0
+        document.querySelectorAll('li a').forEach(el => {
+            el.addEventListener('click', e => {
+                e.preventDefault()
+                window.open(el.href, windows++, 'newwindow', 'toolbar=no,location=no')
+            })
+        })
+    </script>
 </body>
 
 </html>
