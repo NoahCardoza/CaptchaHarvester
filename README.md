@@ -169,8 +169,12 @@ wrapper for the API which makes things really simple. Just take a look at this e
 ```python
 from harvester import fetch
 
-server_address = ('127.0.0.1', 5000)
-token = fetch.token(server_address)
+# assuming we ran: harvester recaptcha-v2 -d guerrillamail.com -k 6LcIHdESAAAAALVQtprzwjt2Rq722tkxk-RDQ0aN
+token = fetch.token('guerrillamail.com')
+print('Token:', token)
+
+# assuming we ran: harvester recaptcha-v2 -d guerrillamail.com -k 6LcIHdESAAAAALVQtprzwjt2Rq722tkxk-RDQ0aN -p 8888
+token = fetch.token('guerrillamail.com', port=8888)
 print('Token:', token)
 ```
 
@@ -181,14 +185,19 @@ that the harvester's server has avalible.
 
 Route | Type | Description
 | :--- | :--- | :--- |
- `/token` | String | This is your most useful endpoint. When called it will pop a token from the queue and return it in plain text. If no tokens are available it will return a [418 status code](https://httpstatuses.com/418).
- `/tokens` | List\[String\] | This will return a list of all the avalible tokens in the queue. It is recomended that you never use any tokens you see in this list because then `/token` may return an already used token.
+ `/<domain>/token` | String | This is your most useful endpoint. When called it will pop a token from the queue and return it in plain text. If no tokens are available it will return a [418 status code](https://httpstatuses.com/418).
+ `/<domain>/tokens` | List\[String\] | This will return a list of all the avalible tokens in the queue. It is recomended that you never use any tokens you see in this list because then `/token` may return an already used token.
+
+Where `<domain>` is the domain the harvester was lanuched on. We need this because the harvester supports intercepting multiple domains at a time.
 
 ### Programtically
 
 You can check out [example.py](example.py) to see how to progamatically
 start the server and access the tokens by integrating the harvester with
 your existsing (or new) code.
+
+The main advantage of setting up the harvester programtically is you can
+set multiple interccepter hooks to solve captchas on multiple domains.
 
 ## PyArmor/PyInstaller
 
@@ -198,9 +207,12 @@ have to do is add the following to your `.spec` file's `Anaysis` call.
 
 ```py
 Anaysis(datas=[
+  ("icon.png", r"harvester\server"),
   ("hcaptcha.html", r"harvester\server\templates"),
   ("recaptcha-v2.html", r"harvester\server\templates"),
-  ("recaptcha-v3.html", r"harvester\server\templates")])
+  ("recaptcha-v3.html", r"harvester\server\templates"),
+  ("domains.html", r"harvester\server\templates")
+])
 ```
 
 ## Credits
@@ -209,7 +221,8 @@ Inspred by [Cosmo3904/Recaptcha-Harvester-V2](https://github.com/Cosmo3904/Recap
 
 For help contact @`MacHacker#7322` (Discord)
 
-Has CaptchaHarvester saved you money on your project? Consider buying me a coffee!
+Has CaptchaHarvester saved you money on your project? Consider buying me a coffee for the countless hours I have
+spent making your job easier?
 
 [![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/noahcardoza)
 
