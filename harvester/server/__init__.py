@@ -59,7 +59,7 @@ def ProxyHTTPRequestHandlerWrapper(domain_cache: Dict[str, MITMRecord] = {}):
         domain: str
 
         def _render_template(self, file: str, **args: Dict[str, Union[str, int]]):
-            with open(path.join(__dir__, 'templates', file), 'r') as f:
+            with open(path.join(__dir__, 'templates', file), 'r', encoding='utf-8') as f:
                 template = f.read()
             for k, v in args.items():
                 template = template.replace('{{ ' + k + ' }}', str(v))
@@ -191,16 +191,15 @@ class Harvester(object):
         if not domain_pattern.match(domain):
             raise DomainInvalidException(
                 'You must only give a domain, not a whole URL.')
-        self.domain_cache[domain] = MITMRecord(
+        return self.domain_cache[domain] = MITMRecord(
             captcha_kind, sitekey, action)
 
     def intercept_recaptch_v2(self, domain: str, sitekey: str):
-        self._intercept(domain, sitekey, CaptchaKindEnum.RECAPTCHA_V2, None)
+        return self._intercept(domain, sitekey, CaptchaKindEnum.RECAPTCHA_V2, None)
 
     def intercept_recaptch_v3(self, domain: str, sitekey: str, action: str = None):
-        self._intercept(domain, sitekey,
-                        CaptchaKindEnum.RECAPTCHA_V3, action=action)
+        return self._intercept(domain, sitekey,
+                               CaptchaKindEnum.RECAPTCHA_V3, action=action)
 
     def intercept_hcaptcha(self, domain: str, sitekey: str):
-        self._intercept(domain, sitekey, CaptchaKindEnum.HCAPTCHA, None)
-        return self.get_token_queue(domain)
+        return self._intercept(domain, sitekey, CaptchaKindEnum.HCAPTCHA, None)
