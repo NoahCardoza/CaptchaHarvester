@@ -191,8 +191,9 @@ class Harvester(object):
         if not domain_pattern.match(domain):
             raise DomainInvalidException(
                 'You must only give a domain, not a whole URL.')
-        return self.domain_cache[domain] = MITMRecord(
+        ret = self.domain_cache[domain] = MITMRecord(
             captcha_kind, sitekey, action)
+        return ret
 
     def intercept_recaptch_v2(self, domain: str, sitekey: str):
         return self._intercept(domain, sitekey, CaptchaKindEnum.RECAPTCHA_V2, None)
