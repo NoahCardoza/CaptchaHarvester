@@ -1,0 +1,29 @@
+<script>
+  // just some basic logging to figure out which sites people use need support for the most
+  // and were most of the traffic is coming from for research purposes
+  // non of the information I gather will be shared with anyone, as you can see
+  // ip anonymization is on
+  // if you'd like to opt out, you can pass do_not_track=True when you init
+  // a Harvester instance: harvester = Harvester(do_not_track=True)
+
+  const UA = 'UA-176436032-1'
+  window[`ga-disable-${UA}`] = {{ do_not_track }};
+
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date(); a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga')
+
+  ga('create', UA, 'auto')
+  ga('set', 'anonymizeIp', true)
+  ga('set', 'referrer', 'https://{{ referrer }}.local')
+  ga('set', 'page', '/{{ captcha }}/{{ domain }}/{{ sitekey }}');
+
+  ga('send', 'pageview')
+
+  if ({{ post_token_submit }}) {
+    ga('send', 'event', 'submit', '{{ captcha }}:{{ domain }}', '{{ sitekey }}', {{ token_submit_success }});
+  }
+</script>

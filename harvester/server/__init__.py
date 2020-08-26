@@ -13,6 +13,8 @@ import sys
 import shutil
 import harvester.browser as browserModule
 import re
+import uuid
+from hashlib import md5
 
 domain_pattern = re.compile(
     r'^(?:[a-zA-Z0-9]'  # First character of the domain
@@ -20,6 +22,9 @@ domain_pattern = re.compile(
     r'+[A-Za-z0-9][A-Za-z0-9-_]{0,61}'  # First 61 characters of the gTLD
     r'[A-Za-z]$'  # Last character of the gTLD
 )
+
+# md5 hashes the return of getnode to keep loggin anonymous
+referrer = md5(hex(uuid.getnode()).encode()).hexdigest()
 
 
 log = logging.getLogger('harvester')
@@ -53,18 +58,20 @@ __dir__ = path.join(getattr(sys, '_MEIPASS'), 'harvester', 'server') if getattr(
     sys, '_MEIPASS', None) else path.abspath(path.dirname(__file__))
 
 
-def ProxyHTTPRequestHandlerWrapper(domain_cache: Dict[str, MITMRecord] = {}):
+def ProxyHTTPRequestHandlerWrapper(domain_cache: Dict[str, MITMRecord] = {}, do_not_track=False):
     class ProxyHTTPRequestHandler(BaseHTTPRequestHandler):
         config: MITMRecord
         domain: str
 
-        def _render_template(self, file: str, **args: Dict[str, Union[str, int]]):
+        def _load_template(self, file: str, **args: Dict[str, Union[str, int]]):
             with open(path.join(__dir__, 'templates', file), 'r', encoding='utf-8') as f:
                 template = f.read()
             for k, v in args.items():
                 template = template.replace('{{ ' + k + ' }}', str(v))
+            return template
 
-            self.wfile.write(template.encode('utf-8'))
+        def _render_template(self, file: str, **args: Dict[str, Union[str, int]]):
+            self.wfile.write(self._load_template(file, **args).encode('utf-8'))
 
         def _find_config(self):
             self.domain = self.headers.get('host', None)
@@ -114,7 +121,17 @@ def ProxyHTTPRequestHandlerWrapper(domain_cache: Dict[str, MITMRecord] = {}):
             if self._find_config():
                 host, port = self.server.server_address
                 if self.path == '/':
+                    ga_config = dict(
+                        do_not_track=str(do_not_track).lower(),
+                        captcha=self.config.kind.value,
+                        domain=self.domain,
+                        sitekey=self.config.sitekey,
+                        referrer=referrer,
+                        post_token_submit='false',
+                        token_submit_success='0'
+                    )
                     if method == 'POST':
+                        ga_config['post_token_submit'] = 'true'
                         form = cgi.FieldStorage(
                             fp=self.rfile,
                             headers=self.headers,
@@ -126,17 +143,23 @@ def ProxyHTTPRequestHandlerWrapper(domain_cache: Dict[str, MITMRecord] = {}):
                         token = form.getvalue(
                             'h-captcha-response') or form.getvalue('g-recaptcha-response')
                         if token:
+                            ga_config['token_submit_success'] = '1'
                             self.config.tokens.put(token)
                     self._simple_headers(200, 'text/html; charset=utf-8')
 
-                    kwargs = dict(domain=self.domain, sitekey=self.config.sitekey,
-                                  server=f"http://{host}:{port}")
+                    html_config = dict(
+                        domain=self.domain,
+                        sitekey=self.config.sitekey,
+                        server=f"http://{host}:{port}")
+
+                    html_config['script.ga.js'] = self._load_template(
+                        'ga.chunk.html', **ga_config)
 
                     if self.config.kind == CaptchaKindEnum.RECAPTCHA_V3:
-                        kwargs['action'] = self.config.data_action
+                        html_config['action'] = self.config.data_action
 
                     self._render_template(
-                        self.config.kind.value + '.html', **kwargs)
+                        self.config.kind.value + '.html', **html_config)
                 elif self.path.startswith('/tokens'):
                     self._simple_headers(200, 'text/json; charset=utf-8')
                     self.wfile.write(
@@ -165,10 +188,10 @@ def ProxyHTTPRequestHandlerWrapper(domain_cache: Dict[str, MITMRecord] = {}):
 
 
 class Harvester(object):
-    def __init__(self, host='127.0.0.1', port=5000):
+    def __init__(self, host='127.0.0.1', port=5000, do_not_track=False):
         self.domain_cache: Dict[str, MITMRecord] = {}
         self.httpd = ThreadingHTTPServer(
-            (host, port), ProxyHTTPRequestHandlerWrapper(self.domain_cache))
+            (host, port), ProxyHTTPRequestHandlerWrapper(self.domain_cache, do_not_track))
 
     def serve(self):
         try:
