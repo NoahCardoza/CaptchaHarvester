@@ -1,5 +1,5 @@
-from urllib.request import urlopen, HTTPError
 import time
+from urllib.request import HTTPError, urlopen
 
 
 def token(domain: str, host: str = '127.0.0.1', port: int = 5000, sleep=3) -> str:

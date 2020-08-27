@@ -1,14 +1,14 @@
-import platform
-import os
-from uuid import uuid4
-from enum import Enum
-from typing import Tuple, List, Union
-import tempfile
 import logging
+import os
+import platform
 import subprocess
-from threading import Thread
-from functools import partial
+import tempfile
 from collections.abc import Iterable
+from enum import Enum
+from functools import partial
+from threading import Thread
+from typing import List, Tuple, Union
+from uuid import uuid4
 
 log = logging.getLogger('harvester')
 

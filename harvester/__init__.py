@@ -1,6 +1,6 @@
-from harvester import server, browser, fetch
-from harvester.server import CaptchaKindEnum, Harvester
+from harvester import browser, fetch, server
 from harvester.browser import BrowserEnum
+from harvester.server import CaptchaKindEnum, Harvester
 
 __version__ = '2.1.1'
 

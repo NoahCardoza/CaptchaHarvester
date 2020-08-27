@@ -4,11 +4,13 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+isort = "*"
 
 [dev-packages]
 pylint = "*"
 "autopep8" = "*"
 twine = "*"
+isort = "*"
 
 [requires]
 python_version = "3.7"

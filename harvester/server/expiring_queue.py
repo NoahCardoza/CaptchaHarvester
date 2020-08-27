@@ -1,4 +1,4 @@
-from queue import Queue, SimpleQueue, Empty
+from queue import Empty, Queue, SimpleQueue
 from threading import Timer
 from typing import Any
 

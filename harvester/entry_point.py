@@ -1,10 +1,11 @@
 import argparse
 import logging
-from threading import Thread
 import sys
+from threading import Thread
+
 from . import browser
-from .server import Harvester, CaptchaKindEnum
 from .browser import BrowserEnum
+from .server import CaptchaKindEnum, Harvester
 
 
 def entry_point():

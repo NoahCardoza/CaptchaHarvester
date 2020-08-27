@@ -1,10 +1,10 @@
 # programatic example showing how to access the harvester api from
 # within your own script without having to use the fetch module
 
-from harvester import Harvester
-from threading import Thread
 import logging
+from threading import Thread
 
+from harvester import Harvester
 
 # silence server logs
 logging.getLogger('harvester').setLevel(logging.CRITICAL)
