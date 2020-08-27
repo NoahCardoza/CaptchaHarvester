@@ -1,20 +1,23 @@
-import json
 import cgi
-from os import path
-from enum import Enum
-from urllib import parse
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from .expiring_queue import ExpiringQueue
-from queue import Queue
-from dataclasses import dataclass
-from typing import Dict, Union, Tuple, List
+import json
 import logging
-import sys
-import shutil
-import harvester.browser as browserModule
 import re
+import shutil
+import sys
 import uuid
+from dataclasses import dataclass
+from enum import Enum
+from getpass import getuser
 from hashlib import md5
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from os import path
+from queue import Queue
+from typing import Dict, List, Tuple, Union
+from urllib import parse
+
+import harvester.browser as browserModule
+
+from .expiring_queue import ExpiringQueue
 
 domain_pattern = re.compile(
     r'^(?:[a-zA-Z0-9]'  # First character of the domain
@@ -23,8 +26,10 @@ domain_pattern = re.compile(
     r'[A-Za-z]$'  # Last character of the gTLD
 )
 
-# md5 hashes the return of getnode to keep loggin anonymous
-referrer = md5(hex(uuid.getnode()).encode()).hexdigest()
+# md5 hashes the return of getnode or the logged in user to keep loggin anonymous
+user_id = md5((hex(uuid.getnode()) if uuid.getnode() == uuid.getnode()
+               else getuser()).encode()).hexdigest()
+session_id = uuid.uuid4()
 
 
 log = logging.getLogger('harvester')
@@ -126,7 +131,8 @@ def ProxyHTTPRequestHandlerWrapper(domain_cache: Dict[str, MITMRecord] = {}, do_
                         captcha=self.config.kind.value,
                         domain=self.domain,
                         sitekey=self.config.sitekey,
-                        referrer=referrer,
+                        user_id=user_id,
+                        session_id=session_id,
                         post_token_submit='false',
                         token_submit_success='0'
                     )
