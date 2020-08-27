@@ -218,10 +218,10 @@ class Harvester(object):
             captcha_kind, sitekey, action)
         return ret.tokens
 
-    def intercept_recaptch_v2(self, domain: str, sitekey: str):
+    def intercept_recaptcha_v2(self, domain: str, sitekey: str):
         return self._intercept(domain, sitekey, CaptchaKindEnum.RECAPTCHA_V2, None)
 
-    def intercept_recaptch_v3(self, domain: str, sitekey: str, action: str = None):
+    def intercept_recaptcha_v3(self, domain: str, sitekey: str, action: str = None):
         return self._intercept(domain, sitekey,
                                CaptchaKindEnum.RECAPTCHA_V3, action=action)
 
