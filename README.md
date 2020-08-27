@@ -27,6 +27,8 @@ Cloudflare's Bot Detection. It's super simlpe to setup, just follow the instruct
 pip install captcha-harvester
 ```
 
+If you'd like to subscribe to the latest updates, you can do so [here](https://libraries.io/subscribe/4946088)!
+
 ### The `dev` Branch
 
 Sometimes there will be updates I'm working on that won't be pushed to the master branch/PyPi
