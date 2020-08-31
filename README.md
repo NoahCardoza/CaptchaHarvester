@@ -7,7 +7,7 @@
 
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge)](https://github.com/NoahCardoza/CaptchaHarvester/graphs/commit-activity)
 [![PyPI Python Versions](https://img.shields.io/pypi/pyversions/captcha-harvester.svg?style=for-the-badge)](https://pypi.python.org/pypi/captcha-harvester/)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/captcha-harvester?style=for-the-badge)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/captcha-harvester?style=for-the-badge)](https://pepy.tech/project/captcha-harvester)
 
 # CaptchaHarvester
 
