@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png">
+  <img src="https://github.com/NoahCardoza/CaptchaHarvester/blob/master/logo.png">
 </p>
 
 [![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)](https://forthebadge.com)
