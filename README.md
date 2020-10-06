@@ -66,10 +66,9 @@ pip install https://github.com/NoahCardoza/CaptchaHarvester/archive/dev.zip
 
 This will setup an HTTP server at `https://127.0.0.1:5000` by default.
 
-If you are running MacOS/Windows and have the [Brave Browser](https://brave.com/)
-or [Google Chrome](https://www.google.com/chrome/), all you have to do is pass
-the `-b/--browser` flag set to either `chrome` or `brave`. This will automatically open
-a new instance of Brave/Chrome under a temporary profile with and map the `domain` to the
+If you are running MacOS/Windows and have the [Google Chrome](https://www.google.com/chrome/), all you have to do is pass
+the the harvester will launch without a hitch! It will automatically open
+a new instance of Chrome under a temporary profile with and map the `domain` to the
 local server.
 
 **NOTE**: Without the `-b/--browser` only the server will start up, without the browser. You won't
