@@ -8,7 +8,7 @@
 <a href="https://pypi.python.org/pypi/captcha-harvester/"><img alt="PyPI Python Versions" src="https://img.shields.io/pypi/pyversions/captcha-harvester.svg?style=for-the-badge"></a>
 <a href="https://pepy.tech/project/captcha-harvester"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/captcha-harvester?style=for-the-badge"></a>
   <br/>
-  <a target="_blank" href="https://discord.gg/AAQrkhR"><img alt="Discord" src="https://img.shields.io/discord/727664815316926565.svg?label=Discord&logo=Discord&colorB=7289da&style=for-the-badge"></a>
+  <a target="_blank" href="https://discord.gg/aAdY5x9arY"><img alt="Discord" src="https://img.shields.io/discord/727664815316926565.svg?label=Discord&logo=Discord&colorB=7289da&style=for-the-badge"></a>
 </p>
 
 
@@ -27,7 +27,7 @@ If you are interested in beta testing or pricing, contact me via Discord.
 
 ## Discord
 
-If you need help feel free to swing by my [Discord](https://discord.gg/AAQrkhR)!
+If you need help feel free to swing by my [Discord](https://discord.gg/aAdY5x9arY)!
 
 ## Use Cases
 
