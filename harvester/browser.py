@@ -36,9 +36,9 @@ def read_osx_defults(plist: str, binary: str) -> str:
     import plistlib  # pylint: disable=import-error
     plist_file = f'{os.environ["HOME"]}/Library/Preferences/{plist}.plist'
     if os.path.exists(plist_file):
-        binary_path = plistlib.readPlist(
-            plist_file).get('LastRunAppBundlePath')
-        if binary_path:
+        with open(plist_file, 'rb') as f:
+            binary_path = plistlib.load(f).get('LastRunAppBundlePath')
+        if binary_path is not None:
             return os.path.join(binary_path, 'Contents', 'MacOS', binary)
 
 
@@ -77,7 +77,7 @@ registry = {
 def get_browser_binary_location(browser: str) -> str:
     """
     Generalized function to find the default installs of popular browsers
-    regardless of running OS 
+    regardless of running OS
     """
     try:
         return registry.get(platform.system())[browser]()
