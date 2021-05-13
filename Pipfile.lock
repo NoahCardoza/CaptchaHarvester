@@ -18,11 +18,11 @@
     "default": {
         "isort": {
             "hashes": [
-                "sha256:dcab1d98b469a12a1a624ead220584391648790275560e1a43e54c5dceae65e7",
-                "sha256:dcaeec1b5f0eca77faea2a35ab790b4f3680ff75590bfcb7145986905aab2f58"
+                "sha256:0a943902919f65c5684ac4e0154b1ad4fac6dcaa5d9f3426b732f1c8b5419be6",
+                "sha256:2bb1680aad211e3c9944dbce1d4ba09a989f04e238296c87fe2139faa26d655d"
             ],
             "index": "pypi",
-            "version": "==5.6.4"
+            "version": "==5.8.0"
         }
     },
     "develop": {
@@ -150,11 +150,11 @@
         },
         "isort": {
             "hashes": [
-                "sha256:dcab1d98b469a12a1a624ead220584391648790275560e1a43e54c5dceae65e7",
-                "sha256:dcaeec1b5f0eca77faea2a35ab790b4f3680ff75590bfcb7145986905aab2f58"
+                "sha256:0a943902919f65c5684ac4e0154b1ad4fac6dcaa5d9f3426b732f1c8b5419be6",
+                "sha256:2bb1680aad211e3c9944dbce1d4ba09a989f04e238296c87fe2139faa26d655d"
             ],
             "index": "pypi",
-            "version": "==5.6.4"
+            "version": "==5.8.0"
         },
         "jeepney": {
             "hashes": [
