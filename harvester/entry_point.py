@@ -11,7 +11,7 @@ from .server import CaptchaKindEnum, Harvester
 def entry_point():
     ap = argparse.ArgumentParser(
         description='CaptchaHarvester: Solve captchas yourself without having to pay for services like 2captcha for use in automated projects.',
-        epilog='For help contact @MacHacker#7322 (Discord)')
+        epilog='For help contact @MacHacker#8396 (Discord)')
     ap.add_argument('type', choices=['recaptcha-v2', 'recaptcha-v3', 'hcaptcha'],
                     help='The type of captcha that that that domain/sitekey pair is for.')
     ap.add_argument('-a', '--data-action',
