@@ -121,7 +121,7 @@ optional arguments:
   -v, --verbose         Show more server and browser (when using -b/--browser)
                         logging.
 
-For help contact @MacHacker#7322 (Discord)
+For help contact @MacHacker#8396 (Discord)
 ```
 
 ## Configuring The Browser
@@ -241,7 +241,7 @@ Anaysis(datas=[
 
 Inspred by [Cosmo3904/Recaptcha-Harvester-V2](https://github.com/Cosmo3904/Recaptcha-Harvester-V2).
 
-For help contact @`MacHacker#7322` (Discord)
+For help contact @`MacHacker#8396` (Discord)
 
 Has CaptchaHarvester saved you money on your project? Consider buying me a coffee for the countless hours I have
 spent making your job easier?
