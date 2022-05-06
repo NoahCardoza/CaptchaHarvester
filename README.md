@@ -16,14 +16,18 @@
 
 > Solve captchas yourself without having to pay for services like 2captcha for use in automated projects.
 
-## v3 Is On The Way!
+## ~~v3 Is On The Way!~~
 
-Since the last commit to this repo I've been working hard on v3. This is a big leap full of 
-slick features that make it a breeze to start harvesting captchas anywhere!
+~~Since the last commit to this repo I've been working hard on v3. This is a big leap full of 
+slick features that make it a breeze to start harvesting captchas anywhere!~~
 
-Go checkout first draft of the [docs](https://noahcardoza.github.io/harvester-docs/) and see for yourself!
+~~Go checkout first draft of the [docs](https://noahcardoza.github.io/harvester-docs/) and see for yourself!~~
 
-If you are interested in beta testing or pricing, contact me via Discord.
+~~If you are interested in beta testing or pricing, contact me via Discord.~~
+
+## Update (05/06/2022)
+
+As of late I have been too busy with school, work, and life to continue developement on this project. I hope to get back to some day but until then, well-written PRs are more than welcome to add features, fix bugs, or improve the useability of the harvester!
 
 ## Discord
 
