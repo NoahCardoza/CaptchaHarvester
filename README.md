@@ -11,6 +11,18 @@
   <a target="_blank" href="https://discord.gg/aAdY5x9arY"><img alt="Discord" src="https://img.shields.io/discord/727664815316926565.svg?label=Discord&logo=Discord&colorB=7289da&style=for-the-badge"></a>
 </p>
 
+# 2captcha Alternatives
+
+## [CapSolver.com](https://dashboard.capsolver.com/passport/register?inviteCode=45JrWKeetsQa)
+
+<p align="center">
+  <a href="https://dashboard.capsolver.com/passport/register?inviteCode=45JrWKeetsQa">
+    <img src="https://i.imgur.com/YaRmSt4.gif" alt="Capsolver's Banner" style="width: 100%;">
+  </a>
+</p>
+
+<a href="https://dashboard.capsolver.com/passport/register?inviteCode=45JrWKeetsQa">Capsolver</a> offers an affordable and quick automatic captcha solving solution with a success rate of 99.15% and the ability to solve a variety of captchas, including reCAPTCHA V2, hCaptcha, FunCaptcha, and more. Integration with various API clients is also supported, and a free trial balance is available with upgraded personal details.
+
 
 # CaptchaHarvester
 
